@@ -124,6 +124,15 @@ cartridge_t* destroy (cartridge_t* c)
 }
 
 
+void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
+{
+  for (size_t i = 0; i != size; ++i)
+  {
+    dst[i] = src[i];
+  }
+}
+
+
 int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
 {
   size_t size = 0x10;
@@ -147,10 +156,7 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
   }
 
   byte* h = c -> header;
-  for (size_t i = 0; i != size; ++i)
-  {
-    h[i] = header[i];
-  }
+  util_copy(size, h, header);
 
   return 0;
 }
@@ -201,10 +207,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
   }
 
   byte* m_PRG_ROM = c -> m_PRG_ROM;
-  for (size_t i = 0; i != num_banks; ++i)
-  {
-    m_PRG_ROM[i] = b_PRG_ROM[i];
-  }
+  util_copy(num_banks, m_PRG_ROM, b_PRG_ROM);
 
   return 0;
 }
@@ -250,10 +253,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
     }
 
     byte* m_CHR_ROM = c -> m_CHR_ROM;
-    for (size_t i = 0; i != num_vbanks; ++i)
-    {
-      m_CHR_ROM[i] = b_CHR_ROM[i];
-    }
+    util_copy(num_vbanks, m_CHR_ROM, b_CHR_ROM);
   }
 
   printf("ROM with CHR-RAM\n");
