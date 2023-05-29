@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define NES_FAILURE_STATE 0xffffffff
-#define NES_SUCCESS_STATE 0x00000000
+#define NES_FAILURE_STATE ( (int) 0xffffffff )
+#define NES_SUCCESS_STATE ( (int) 0x00000000 )
 
 typedef unsigned char byte;
 
