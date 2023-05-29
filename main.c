@@ -16,6 +16,7 @@
 //
 // References:
 // [0] https://github.com/amhndu/SimpleNES
+// [1] https://www.howtogeek.com/428987/whats-the-difference-between-ntsc-and-pal/
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -317,6 +318,8 @@ void info_colorSystem (cartridge_t* c)
   if ( (header[0xa] & 0x1) )
   {
     // NOTE: dunno why the ROM is not PAL compatible and how serious that really is
+    // Perhaps it is okay if it supports one or the other but this will have to be
+    // resolved later.
     printf("Unsupported PAL ROM!\n");
   }
   else
@@ -554,3 +557,9 @@ void loadFromFile (cartridge_t* c)
 //
 // A gamer passionate about programming should strive to do console emulation of one
 // of the most epic consoles at some point in their career. Now it is my time.
+
+
+// TODO:
+// [ ] check how ROMs unsupporting the PAL color system affect the SimpleNES emulator and
+//     see if you can come up with a possible solution. Digging around has lead me to
+//     find that PAL is used in Europe and Asia, whereas NTSC is used in the USA (ref[1]).
