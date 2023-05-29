@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define NES_FAILURE_STATE 0xffffffff
+#define NES_SUCCESS_STATE 0x00000000
+
 typedef unsigned char byte;
 
 typedef struct {
@@ -142,7 +145,7 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
   {
     printf("Invalid NES ROM\n");
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   printf("header: %c %c %c %x\n", header[0], header[1], header[2], header[3]);
@@ -152,13 +155,13 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
   {
     printf("failed to allocate memory for ROM header!\n");
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   byte* h = c -> header;
   util_copy(size, h, header);
 
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
@@ -175,7 +178,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   c -> banks = banks;
@@ -190,7 +193,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
   c -> num_banks = num_banks;
 
@@ -203,13 +206,13 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   byte* m_PRG_ROM = c -> m_PRG_ROM;
   util_copy(num_banks, m_PRG_ROM, b_PRG_ROM);
 
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
@@ -234,7 +237,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
       free(c -> m_PRG_ROM);
       c -> m_PRG_ROM = NULL;
       fclose(rom);
-      return 0xFFFFFFFF;
+      return NES_FAILURE_STATE;
     }
     c -> num_vbanks = num_vbanks;
 
@@ -249,7 +252,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
       free(c -> m_PRG_ROM);
       c -> m_PRG_ROM = NULL;
       fclose(rom);
-      return 0xFFFFFFFF;
+      return NES_FAILURE_STATE;
     }
 
     byte* m_CHR_ROM = c -> m_CHR_ROM;
@@ -257,7 +260,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
   }
 
   printf("ROM with CHR-RAM\n");
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
@@ -338,10 +341,10 @@ int hasTrainerSupport (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
