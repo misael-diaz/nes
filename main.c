@@ -9,6 +9,11 @@
 // Tests reading NES ROM.
 // Ports SimpleNES (reference [0]) to clang for learning purposes.
 //
+// Copyright (c) 2023 Misael Diaz-Maldonado
+// This file is released under the GNU General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
 // References:
 // [0] https://github.com/amhndu/SimpleNES
 
