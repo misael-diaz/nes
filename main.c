@@ -366,7 +366,7 @@ void loadFromFile (cartridge_t* c)
 
   int stat;
   stat = load_H_ROM(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
@@ -374,19 +374,19 @@ void loadFromFile (cartridge_t* c)
   // reads ROM data:
 
   stat = hasTrainerSupport(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
 
   stat = load_PRG_ROM(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
 
   stat = load_CHR_ROM(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
