@@ -124,7 +124,6 @@ cartridge_t* destroy (cartridge_t* c)
 }
 
 
-
 int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
 {
   size_t size = 0x10;
