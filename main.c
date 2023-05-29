@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define NES_FAILURE_STATE ( (int) 0xffffffff )
+#define NES_SUCCESS_STATE ( (int) 0x00000000 )
+
 typedef unsigned char byte;
 
 typedef struct {
@@ -142,7 +145,7 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
   {
     printf("Invalid NES ROM\n");
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   printf("header: %c %c %c %x\n", header[0], header[1], header[2], header[3]);
@@ -152,13 +155,13 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
   {
     printf("failed to allocate memory for ROM header!\n");
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   byte* h = c -> header;
   util_copy(size, h, header);
 
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
@@ -175,7 +178,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   c -> banks = banks;
@@ -190,7 +193,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
   c -> num_banks = num_banks;
 
@@ -203,13 +206,13 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
   byte* m_PRG_ROM = c -> m_PRG_ROM;
   util_copy(num_banks, m_PRG_ROM, b_PRG_ROM);
 
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
@@ -234,7 +237,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
       free(c -> m_PRG_ROM);
       c -> m_PRG_ROM = NULL;
       fclose(rom);
-      return 0xFFFFFFFF;
+      return NES_FAILURE_STATE;
     }
     c -> num_vbanks = num_vbanks;
 
@@ -249,7 +252,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
       free(c -> m_PRG_ROM);
       c -> m_PRG_ROM = NULL;
       fclose(rom);
-      return 0xFFFFFFFF;
+      return NES_FAILURE_STATE;
     }
 
     byte* m_CHR_ROM = c -> m_CHR_ROM;
@@ -257,14 +260,15 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
   }
 
   printf("ROM with CHR-RAM\n");
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
 void setTableMirroring (cartridge_t* c)
 {
   byte* header = c -> header;
-  if (header[6] & 0x8)
+  byte const isFourScreenMirroringBitSet = (header[6] & 0x08);
+  if (isFourScreenMirroringBitSet)
   {
     enum nameTableMirroring mirroring;
     mirroring = FourScreen;
@@ -274,7 +278,8 @@ void setTableMirroring (cartridge_t* c)
   }
   else
   {
-    byte m_nameTableMirroring = (header[6] & 0x1);
+    byte const isTableMirroringBitSet = (header[6] & 0x01);
+    byte m_nameTableMirroring = isTableMirroringBitSet;
     switch (m_nameTableMirroring)
     {
       case 0:
@@ -295,7 +300,7 @@ void setTableMirroring (cartridge_t* c)
 void setMapperNumber (cartridge_t* c)
 {
   byte* header = c -> header;
-  byte m_mapperNumber = ((header[6] >> 4) & 0xf) | (header[7] & 0xf0);
+  byte m_mapperNumber = ( ( (header[6] >> 4) & 0x0f ) | (header[7] & 0xf0) );
   c -> m_mapperNumber = m_mapperNumber;
   printf("Mapper Number: %u \n", m_mapperNumber);
 }
@@ -304,7 +309,8 @@ void setMapperNumber (cartridge_t* c)
 void setExtendedRAM (cartridge_t* c)
 {
   byte* header = c -> header;
-  bool m_extendedRAM = (header[6] & 0x2)? true : false;
+  byte const isExtendedRAMBitSet = (header[6] & 0x02);
+  bool m_extendedRAM = (isExtendedRAMBitSet)? true : false;
   c -> m_extendedRAM = m_extendedRAM;
   printf("Extended CPU RAM: %u \n", m_extendedRAM);
 }
@@ -313,8 +319,9 @@ void setExtendedRAM (cartridge_t* c)
 void info_colorSystem (cartridge_t* c)
 {
   byte* header = c -> header;
+  byte const isColorSystemBitSet = (header[0x0a] & 0x01);
   //if ( (header[0xa] & 0x3) == 0x2 || (header[0xa] & 0x1) ) // what you should test
-  if ( (header[0xa] & 0x1) )
+  if (isColorSystemBitSet)
   {
     // NOTE: dunno why the ROM is not PAL compatible and how serious that really is
     // Perhaps it is okay if it supports one or the other but this will have to be
@@ -331,17 +338,18 @@ void info_colorSystem (cartridge_t* c)
 int hasTrainerSupport (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
-  if (header[6] & 0x4)
+  byte const isTrainerBitSet = (header[6] & 0x04);
+  if (isTrainerBitSet)
   {
     printf("Unsupported Trainer!\n");
     free(c -> header);
     c -> header = NULL;
     header = NULL;
     fclose(rom);
-    return 0xFFFFFFFF;
+    return NES_FAILURE_STATE;
   }
 
-  return 0;
+  return NES_SUCCESS_STATE;
 }
 
 
@@ -358,7 +366,7 @@ void loadFromFile (cartridge_t* c)
 
   int stat;
   stat = load_H_ROM(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
@@ -366,19 +374,19 @@ void loadFromFile (cartridge_t* c)
   // reads ROM data:
 
   stat = hasTrainerSupport(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
 
   stat = load_PRG_ROM(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
 
   stat = load_CHR_ROM(rom, c);
-  if (stat != 0)
+  if (stat == NES_FAILURE_STATE)
   {
     return;
   }
