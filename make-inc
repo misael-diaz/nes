@@ -14,31 +14,12 @@
 #
 
 # clang compiler
-CC = gcc-10
-
-# includes
-INC =
+CC = gcc
 
 # options
-CCOPT = $(INC) -g -Wall -Wextra -O0
+CCOPT = -g -Wall -Wextra -O0
 #CCOPT = $(INC) -O2 -ftree-vectorize -fopt-info-missed=missed-opts.log
 #CCOPT = $(INC) -O2 -ftree-vectorize -fopt-info-optimized=opts.log
 
 # libraries
 LIBS =
-
-
-# sources
-CARTRIDGE_SRC = cartridge.c
-MAIN_SRC = main.c
-
-
-# objects
-CARTRIDGE_OBJ = cartridge.o
-MAIN_OBJ = main.o
-OBJECTS = $(CARTRIDGE_OBJ) $(MAIN_OBJ)
-
-
-# executables
-MAIN_EXE = nes
-TESTS = $(MAIN_EXE)

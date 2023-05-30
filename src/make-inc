@@ -1,0 +1,36 @@
+# NES Emulation						May 30, 2023
+#
+# 			Academic Purpose
+#
+# source: make-inc
+# author: @misael-diaz
+#
+# Synopsis:
+# Defines the include file for building the application with GNU make.
+#
+# Copyright (c) 2023 Misael Diaz-Maldonado
+#
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+
+# include path
+INC = -I../../nes/inc
+
+
+# source codes
+CARTRIDGE_SRC = cartridge.c
+MAIN_SRC = main.c
+
+
+# object files
+CARTRIDGE_OBJ = cartridge.o
+MAIN_OBJ = main.o
+OBJECTS = $(CARTRIDGE_OBJ) $(MAIN_OBJ)
+
+
+# binaries
+MAIN_BIN = ../../nes/nes-emulator
+TESTS = $(MAIN_BIN)
