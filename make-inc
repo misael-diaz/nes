@@ -29,12 +29,14 @@ LIBS =
 
 
 # sources
+CARTRIDGE_SRC = cartridge.c
 MAIN_SRC = main.c
 
 
 # objects
+CARTRIDGE_OBJ = cartridge.o
 MAIN_OBJ = main.o
-OBJECTS = $(MAIN_OBJ)
+OBJECTS = $(CARTRIDGE_OBJ) $(MAIN_OBJ)
 
 
 # executables

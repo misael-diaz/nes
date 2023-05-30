@@ -21,6 +21,9 @@ all: $(TESTS)
 $(MAIN_EXE): $(OBJECTS)
 	$(CC) $(CCOPT) $(OBJECTS) -o $(MAIN_EXE) $(LIBS)
 
+$(CARTRIDGE_OBJ): $(CARTRIDGE_SRC)
+	$(CC) $(CCOPT) -c $(CARTRIDGE_SRC) -o $(CARTRIDGE_OBJ)
+
 $(MAIN_OBJ): $(MAIN_SRC)
 	$(CC) $(CCOPT) -c $(MAIN_SRC) -o $(MAIN_OBJ)
 
