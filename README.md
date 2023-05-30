@@ -2,7 +2,7 @@
 
 **Academic Purpose**
 
-I am doing this to learn about game console emulation and because it is fun.
+I am doing this to learn about game console emulation and because it is fun!
 
 This work is a port of [SimpleNES](https://github.com/amhndu/SimpleNES) to C.
 
