@@ -11,9 +11,7 @@ This work is a port of [SimpleNES](https://github.com/amhndu/SimpleNES) to C.
 I am assuming that you are familiar with Linux and that you have some experience working
 with the terminal application.
 
-To compile the NES emulator open the terminal application:
-
-Clone this repository
+To compile the NES emulator open the terminal application and clone this repository:
 
 ```sh
 git clone https://github.com/misael-diaz/nes.git
