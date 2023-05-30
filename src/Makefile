@@ -6,7 +6,7 @@
 # author: @misael-diaz
 #
 # Synopsis:
-# Defines the Makefile for building the program with GNU make.
+# Defines the Makefile for building the application with GNU make.
 #
 # Copyright (c) 2023 Misael Diaz-Maldonado
 #
@@ -17,13 +17,16 @@
 
 include make-inc
 
-export CC
-export CCOPT
+all: $(TESTS)
 
-all: nes
+$(MAIN_BIN): $(OBJECTS)
+	$(CC) $(CCOPT) $(OBJECTS) -o $(MAIN_BIN) $(LIBS)
 
-nes:
-	@$(MAKE) -C src
+$(CARTRIDGE_OBJ): $(CARTRIDGE_SRC)
+	$(CC) $(CCOPT) $(INC) -c $(CARTRIDGE_SRC) -o $(CARTRIDGE_OBJ)
+
+$(MAIN_OBJ): $(MAIN_SRC)
+	$(CC) $(CCOPT) $(INC) -c $(MAIN_SRC) -o $(MAIN_OBJ)
 
 clean:
-	@$(MAKE) -C src clean
+	/bin/rm -rf *.o $(TESTS)

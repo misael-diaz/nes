@@ -1,76 +1,9 @@
-// NES Emulation					May 29, 2023
-//
-//			Academic Purpose
-//
-// source: main.c
-// author: @misael-diaz
-//
-// Synopsis:
-// Tests reading NES ROM.
-// Ports SimpleNES (reference [0]) to clang for learning purposes.
-//
-// Copyright (c) 2023 Misael Diaz-Maldonado
-// This file is released under the GNU General Public License as published
-// by the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// References:
-// [0] https://github.com/amhndu/SimpleNES
-// [1] https://www.howtogeek.com/428987/whats-the-difference-between-ntsc-and-pal/
-
-#include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include "cartridge.h"
+
 
 #define NES_FAILURE_STATE ( (int) 0xffffffff )
 #define NES_SUCCESS_STATE ( (int) 0x00000000 )
-
-typedef unsigned char byte;
-
-typedef struct {
-  byte* header;
-  byte* m_PRG_ROM;
-  byte* m_CHR_ROM;
-  size_t num_banks;
-  size_t num_vbanks;
-  byte banks;
-  byte vbanks;
-  byte m_nameTableMirroring;
-  byte m_mapperNumber;
-  bool m_extendedRAM;
-} cartridge_t;
-
-// from Mapper
-enum nameTableMirroring
-{
-  Horizontal = 0,
-  Vertical = 1,
-  FourScreen = 8
-};
-
-cartridge_t* create();
-cartridge_t* destroy(cartridge_t*);
-
-void loadFromFile(cartridge_t* c);
-
-int main ()
-{
-  cartridge_t* c = create();
-  loadFromFile(c);
-
-  if (c -> m_PRG_ROM == NULL)
-  {
-    printf("PRG-ROM NOT OK\n");
-  }
-
-  if (c -> m_CHR_ROM == NULL)
-  {
-    printf("OK\n");
-  }
-
-  c = destroy(c);
-  return 0;
-}
 
 
 cartridge_t* create ()
@@ -270,6 +203,12 @@ void setTableMirroring (cartridge_t* c)
   byte const isFourScreenMirroringBitSet = (header[6] & 0x08);
   if (isFourScreenMirroringBitSet)
   {
+    enum nameTableMirroring // from Mapper, placed here temporarily
+    {
+      Horizontal = 0,
+      Vertical = 1,
+      FourScreen = 8
+    };
     enum nameTableMirroring mirroring;
     mirroring = FourScreen;
     byte m_nameTableMirroring = mirroring;
@@ -400,12 +339,25 @@ void loadFromFile (cartridge_t* c)
 }
 
 
-// COMMENTS:
-// I am doing this for fun and because I want to test my ability to port C++ to C code.
-// By doing this I am aiming to learn more about these languages.
+// NES Emulation					May 29, 2023
 //
-// A gamer passionate about programming should strive to do console emulation of one
-// of the most epic consoles at some point in their career. Now it is my time.
+//			Academic Purpose
+//
+// source: cartridge.c
+// author: @misael-diaz
+//
+// Synopsis:
+// Implements the methods of the cartridge object.
+// Ports SimpleNES (reference [0]) to clang for learning purposes.
+//
+// Copyright (c) 2023 Misael Diaz-Maldonado
+// This file is released under the GNU General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// References:
+// [0] https://github.com/amhndu/SimpleNES
+// [1] https://www.howtogeek.com/428987/whats-the-difference-between-ntsc-and-pal/
 
 
 // TODO:

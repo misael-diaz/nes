@@ -1,4 +1,6 @@
-# NES Emulation			Academic Purpose		May 30, 2023
+# NES Emulation						May 30, 2023
+#
+# 			Academic Purpose
 #
 # source: make-inc
 # author: @misael-diaz
@@ -13,13 +15,22 @@
 # (at your option) any later version.
 #
 
-# clang compiler
-CC = gcc
 
-# options
-CCOPT = -g -Wall -Wextra -O0
-#CCOPT = $(INC) -O2 -ftree-vectorize -fopt-info-missed=missed-opts.log
-#CCOPT = $(INC) -O2 -ftree-vectorize -fopt-info-optimized=opts.log
+# include path
+INC = -I../../nes/inc
 
-# libraries
-LIBS =
+
+# source codes
+CARTRIDGE_SRC = cartridge.c
+MAIN_SRC = main.c
+
+
+# object files
+CARTRIDGE_OBJ = cartridge.o
+MAIN_OBJ = main.o
+OBJECTS = $(CARTRIDGE_OBJ) $(MAIN_OBJ)
+
+
+# binaries
+MAIN_BIN = ../../nes/nes-emulator
+TESTS = $(MAIN_BIN)
