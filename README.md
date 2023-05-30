@@ -1,6 +1,6 @@
 # NES Emulation
 
-Academic Purpose
+**Academic Purpose**
 
 I am doing this to learn about game console emulation and because it is fun.
 
@@ -36,7 +36,8 @@ gcc -g -Wall -Wextra -O0 cartridge.o main.o -o ../../nes/nes-emulator
 make[1]: Leaving directory '/home/username/.../git/nes/src'
 ```
 
-You should see the following files:
+If you see the following files that means that means that you have successfully compiled
+the emulator from source:
 
 ```
 inc  LICENSE  Makefile  make-inc  nes-emulator  README.md  ROM  src
@@ -50,7 +51,7 @@ NES ROM that you will have to provide if you wish to test the emulator.
 The NES Emulator expects the ROM to be located at the same level (as shown at the end of
 the previous section) as the emulator for it to work.
 
-To use the emulator input the following command on your terminal:
+To run the emulator input the following command on your terminal:
 
 ```sh
 ./nes-emulator
