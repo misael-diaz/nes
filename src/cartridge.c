@@ -6,58 +6,8 @@
 #define NES_SUCCESS_STATE ( (int) 0x00000000 )
 
 
-cartridge_t* create ()
-{
-  cartridge_t* c = malloc( sizeof(cartridge_t) );
-  if (c == NULL)
-  {
-    return c;
-  }
-
-  c -> header = NULL;
-  c -> m_PRG_ROM = NULL;
-  c -> m_CHR_ROM = NULL;
-  c -> num_banks = 0;
-  c -> num_vbanks = 0;
-  c -> banks = 0;
-  c -> vbanks = 0;
-  c -> m_nameTableMirroring = 0;
-  c -> m_mapperNumber = 0;
-  c -> m_extendedRAM = false;
-
-  return c;
-}
 
 
-cartridge_t* destroy (cartridge_t* c)
-{
-  if (c == NULL)
-  {
-    return c;
-  }
-
-  if (c -> header != NULL)
-  {
-    free(c -> header);
-    c -> header= NULL;
-  }
-
-  if (c -> m_PRG_ROM != NULL)
-  {
-    free(c -> m_PRG_ROM);
-    c -> m_PRG_ROM = NULL;
-  }
-
-  if (c -> m_CHR_ROM != NULL)
-  {
-    free(c -> m_CHR_ROM);
-    c -> m_CHR_ROM = NULL;
-  }
-
-  free(c);
-  c = NULL;
-  return c;
-}
 
 
 void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
@@ -339,6 +289,58 @@ void loadFromFile (cartridge_t* c)
 }
 
 
+cartridge_t* create ()
+{
+  cartridge_t* c = malloc( sizeof(cartridge_t) );
+  if (c == NULL)
+  {
+    return c;
+  }
+
+  c -> header = NULL;
+  c -> m_PRG_ROM = NULL;
+  c -> m_CHR_ROM = NULL;
+  c -> num_banks = 0;
+  c -> num_vbanks = 0;
+  c -> banks = 0;
+  c -> vbanks = 0;
+  c -> m_nameTableMirroring = 0;
+  c -> m_mapperNumber = 0;
+  c -> m_extendedRAM = false;
+
+  return c;
+}
+
+
+cartridge_t* destroy (cartridge_t* c)
+{
+  if (c == NULL)
+  {
+    return c;
+  }
+
+  if (c -> header != NULL)
+  {
+    free(c -> header);
+    c -> header= NULL;
+  }
+
+  if (c -> m_PRG_ROM != NULL)
+  {
+    free(c -> m_PRG_ROM);
+    c -> m_PRG_ROM = NULL;
+  }
+
+  if (c -> m_CHR_ROM != NULL)
+  {
+    free(c -> m_CHR_ROM);
+    c -> m_CHR_ROM = NULL;
+  }
+
+  free(c);
+  c = NULL;
+  return c;
+}
 // NES Emulation					May 29, 2023
 //
 //			Academic Purpose
