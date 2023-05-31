@@ -15,7 +15,7 @@ static void util_copy (size_t size, byte* restrict dst, const byte* restrict src
 }
 
 
-static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
+static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads ROM Header into cartridge
 {
   size_t size = 0x10;
   byte header[size];
