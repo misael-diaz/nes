@@ -29,6 +29,7 @@ int main ()
   cartridge_t* c = cartridge.create();
   c -> loadFromFile(c);
 
+  /*
   if (c -> m_PRG_ROM == NULL)
   {
     printf("PRG-ROM NOT OK\n");
@@ -38,6 +39,7 @@ int main ()
   {
     printf("OK\n");
   }
+  */
 
   c = cartridge.destroy(c);
   return 0;

@@ -7,16 +7,9 @@
 
 typedef struct
 {
-  byte* header;
-  byte* m_PRG_ROM;
-  byte* m_CHR_ROM;
-  size_t num_banks;
-  size_t num_vbanks;
-  byte banks;
-  byte vbanks;
-  byte m_nameTableMirroring;
-  byte m_mapperNumber;
-  bool m_extendedRAM;
+  // private:
+  void* data;
+  // public:
   void (*loadFromFile)(void*);
 } cartridge_t;
 

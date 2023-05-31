@@ -6,6 +6,22 @@
 #define NES_SUCCESS_STATE ( (int) 0x00000000 )
 
 
+// cartridge private data typedef:
+typedef struct
+{
+  byte* header;
+  byte* m_PRG_ROM;
+  byte* m_CHR_ROM;
+  size_t num_banks;
+  size_t num_vbanks;
+  byte banks;
+  byte vbanks;
+  byte m_nameTableMirroring;
+  byte m_mapperNumber;
+  bool m_extendedRAM;
+} data_t;
+
+
 static void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
 {
   for (size_t i = 0; i != size; ++i)
@@ -29,15 +45,16 @@ static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads ROM Header into cartr
 
   printf("header: %c %c %c %x\n", header[0], header[1], header[2], header[3]);
 
-  c -> header = (byte*) malloc( size * sizeof(byte) );
-  if (c -> header == NULL)
+  data_t* d = c -> data;
+  d -> header = (byte*) malloc( size * sizeof(byte) );
+  if (d -> header == NULL)
   {
     printf("failed to allocate memory for ROM header!\n");
     fclose(rom);
     return NES_FAILURE_STATE;
   }
 
-  byte* h = c -> header;
+  byte* h = d -> header;
   util_copy(size, h, header);
 
   return NES_SUCCESS_STATE;
@@ -46,21 +63,25 @@ static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads ROM Header into cartr
 
 static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte banks = header[4];
   printf("16KB PRG-ROM Banks: %u \n", banks);
   if (!banks)
   {
     printf("16KB PRG-ROM Banks: %u \n", banks);
     printf("ROM does not have PRG-ROM Banks! Failed to load ROM\n");
-    free(c -> header);
-    c -> header = NULL;
+    free(d -> header);
+    d -> header = NULL;
     header = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
     fclose(rom);
     return NES_FAILURE_STATE;
   }
 
-  c -> banks = banks;
+  d -> banks = banks;
 
   size_t num_banks = (0x4000 * banks);
   byte b_PRG_ROM[num_banks];
@@ -68,27 +89,33 @@ static int load_PRG_ROM (FILE* rom, cartridge_t* c)
   if (num_banks != count)
   {
     printf("Failed to read PRG-ROM!\n");
-    free(c -> header);
-    c -> header = NULL;
+    free(d -> header);
+    d -> header = NULL;
     header = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
     fclose(rom);
     return NES_FAILURE_STATE;
   }
-  c -> num_banks = num_banks;
+  d -> num_banks = num_banks;
 
-  c -> m_PRG_ROM = (byte*) malloc( num_banks * sizeof(byte) );
+  d -> m_PRG_ROM = (byte*) malloc( num_banks * sizeof(byte) );
 
-  if (c -> m_PRG_ROM == NULL)
+  if (d -> m_PRG_ROM == NULL)
   {
     printf("failed to allocate memory for PRG-ROM!\n");
-    free(c -> header);
-    c -> header = NULL;
+    free(d -> header);
+    d -> header = NULL;
     header = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
     fclose(rom);
     return NES_FAILURE_STATE;
   }
 
-  byte* m_PRG_ROM = c -> m_PRG_ROM;
+  byte* m_PRG_ROM = d -> m_PRG_ROM;
   util_copy(num_banks, m_PRG_ROM, b_PRG_ROM);
 
   return NES_SUCCESS_STATE;
@@ -97,9 +124,10 @@ static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 
 static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte vbanks = header[5];
-  c -> vbanks = vbanks;
+  d -> vbanks = vbanks;
   printf("8KB CHR-ROM Banks: %u \n", vbanks);
 
   if (vbanks)
@@ -110,31 +138,37 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
     if (num_vbanks != count)
     {
       printf("Failed to read CHR-ROM!\n");
-      free(c -> header);
-      c -> header = NULL;
+      free(d -> header);
+      d -> header = NULL;
       header = NULL;
-      free(c -> m_PRG_ROM);
-      c -> m_PRG_ROM = NULL;
+      free(d -> m_PRG_ROM);
+      d -> m_PRG_ROM = NULL;
+      free(c -> data);
+      c -> data = NULL;
+      d = NULL;
       fclose(rom);
       return NES_FAILURE_STATE;
     }
-    c -> num_vbanks = num_vbanks;
+    d -> num_vbanks = num_vbanks;
 
-    c -> m_CHR_ROM = (byte*) malloc( num_vbanks * sizeof(byte) );
+    d -> m_CHR_ROM = (byte*) malloc( num_vbanks * sizeof(byte) );
 
-    if (c -> m_CHR_ROM == NULL)
+    if (d -> m_CHR_ROM == NULL)
     {
       printf("failed to allocate memory for CHR-ROM!\n");
-      free(c -> header);
-      c -> header = NULL;
+      free(d -> header);
+      d -> header = NULL;
       header = NULL;
-      free(c -> m_PRG_ROM);
-      c -> m_PRG_ROM = NULL;
+      free(d -> m_PRG_ROM);
+      d -> m_PRG_ROM = NULL;
+      free(c -> data);
+      c -> data = NULL;
+      d = NULL;
       fclose(rom);
       return NES_FAILURE_STATE;
     }
 
-    byte* m_CHR_ROM = c -> m_CHR_ROM;
+    byte* m_CHR_ROM = d -> m_CHR_ROM;
     util_copy(num_vbanks, m_CHR_ROM, b_CHR_ROM);
   }
 
@@ -145,7 +179,8 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 
 static void setTableMirroring (cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte const isFourScreenMirroringBitSet = (header[6] & 0x08);
   if (isFourScreenMirroringBitSet)
   {
@@ -159,7 +194,7 @@ static void setTableMirroring (cartridge_t* c)
     mirroring = FourScreen;
     byte m_nameTableMirroring = mirroring;
     printf("Name Table Mirroring: %u \n", m_nameTableMirroring);
-    c -> m_nameTableMirroring = m_nameTableMirroring;
+    d -> m_nameTableMirroring = m_nameTableMirroring;
   }
   else
   {
@@ -177,33 +212,36 @@ static void setTableMirroring (cartridge_t* c)
 	printf("Name Table Mirroring: Unknown\n");
 	break;
     }
-    c -> m_nameTableMirroring = m_nameTableMirroring;
+    d -> m_nameTableMirroring = m_nameTableMirroring;
   }
 }
 
 
 static void setMapperNumber (cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte m_mapperNumber = ( ( (header[6] >> 4) & 0x0f ) | (header[7] & 0xf0) );
-  c -> m_mapperNumber = m_mapperNumber;
+  d -> m_mapperNumber = m_mapperNumber;
   printf("Mapper Number: %u \n", m_mapperNumber);
 }
 
 
 static void setExtendedRAM (cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte const isExtendedRAMBitSet = (header[6] & 0x02);
   bool m_extendedRAM = (isExtendedRAMBitSet)? true : false;
-  c -> m_extendedRAM = m_extendedRAM;
+  d -> m_extendedRAM = m_extendedRAM;
   printf("Extended CPU RAM: %u \n", m_extendedRAM);
 }
 
 
 static void info_colorSystem (cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte const isColorSystemBitSet = (header[0x0a] & 0x01);
   //if ( (header[0xa] & 0x3) == 0x2 || (header[0xa] & 0x1) ) // what you should test
   if (isColorSystemBitSet)
@@ -222,14 +260,18 @@ static void info_colorSystem (cartridge_t* c)
 
 static int hasTrainerSupport (FILE* rom, cartridge_t* c)
 {
-  byte* header = c -> header;
+  data_t* d = c -> data;
+  byte* header = d -> header;
   byte const isTrainerBitSet = (header[6] & 0x04);
   if (isTrainerBitSet)
   {
     printf("Unsupported Trainer!\n");
-    free(c -> header);
-    c -> header = NULL;
+    free(d -> header);
+    d -> header = NULL;
     header = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
     fclose(rom);
     return NES_FAILURE_STATE;
   }
@@ -294,16 +336,26 @@ static cartridge_t* create ()
     return c;
   }
 
-  c -> header = NULL;
-  c -> m_PRG_ROM = NULL;
-  c -> m_CHR_ROM = NULL;
-  c -> num_banks = 0;
-  c -> num_vbanks = 0;
-  c -> banks = 0;
-  c -> vbanks = 0;
-  c -> m_nameTableMirroring = 0;
-  c -> m_mapperNumber = 0;
-  c -> m_extendedRAM = false;
+  c -> data = (data_t*) malloc( sizeof(data_t) );
+  if (c -> data == NULL)
+  {
+    free(c);
+    c = NULL;
+    printf("failed to allocate memory for the cartridge data!\n");
+    return c;
+  }
+
+  data_t* d = c -> data;
+  d -> header = NULL;
+  d -> m_PRG_ROM = NULL;
+  d -> m_CHR_ROM = NULL;
+  d -> num_banks = 0;
+  d -> num_vbanks = 0;
+  d -> banks = 0;
+  d -> vbanks = 0;
+  d -> m_nameTableMirroring = 0;
+  d -> m_mapperNumber = 0;
+  d -> m_extendedRAM = false;
 
   c -> loadFromFile = loadFromFile;
 
@@ -318,23 +370,35 @@ static cartridge_t* destroy (cartridge_t* c)
     return c;
   }
 
-  if (c -> header != NULL)
+  if (c -> data == NULL)
   {
-    free(c -> header);
-    c -> header= NULL;
+    free(c);
+    c = NULL;
+    return c;
   }
 
-  if (c -> m_PRG_ROM != NULL)
+  data_t* d = c -> data;
+  if (d -> header != NULL)
   {
-    free(c -> m_PRG_ROM);
-    c -> m_PRG_ROM = NULL;
+    free(d -> header);
+    d -> header= NULL;
   }
 
-  if (c -> m_CHR_ROM != NULL)
+  if (d -> m_PRG_ROM != NULL)
   {
-    free(c -> m_CHR_ROM);
-    c -> m_CHR_ROM = NULL;
+    free(d -> m_PRG_ROM);
+    d -> m_PRG_ROM = NULL;
   }
+
+  if (d -> m_CHR_ROM != NULL)
+  {
+    free(d -> m_CHR_ROM);
+    d -> m_CHR_ROM = NULL;
+  }
+
+  free(c -> data);
+  c -> data = NULL;
+  d = NULL;
 
   free(c);
   c = NULL;
