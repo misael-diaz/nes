@@ -6,10 +6,6 @@
 #define NES_SUCCESS_STATE ( (int) 0x00000000 )
 
 
-
-
-
-
 static void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
 {
   for (size_t i = 0; i != size; ++i)
