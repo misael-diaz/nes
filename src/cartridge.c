@@ -6,61 +6,7 @@
 #define NES_SUCCESS_STATE ( (int) 0x00000000 )
 
 
-cartridge_t* create ()
-{
-  cartridge_t* c = malloc( sizeof(cartridge_t) );
-  if (c == NULL)
-  {
-    return c;
-  }
-
-  c -> header = NULL;
-  c -> m_PRG_ROM = NULL;
-  c -> m_CHR_ROM = NULL;
-  c -> num_banks = 0;
-  c -> num_vbanks = 0;
-  c -> banks = 0;
-  c -> vbanks = 0;
-  c -> m_nameTableMirroring = 0;
-  c -> m_mapperNumber = 0;
-  c -> m_extendedRAM = false;
-
-  return c;
-}
-
-
-cartridge_t* destroy (cartridge_t* c)
-{
-  if (c == NULL)
-  {
-    return c;
-  }
-
-  if (c -> header != NULL)
-  {
-    free(c -> header);
-    c -> header= NULL;
-  }
-
-  if (c -> m_PRG_ROM != NULL)
-  {
-    free(c -> m_PRG_ROM);
-    c -> m_PRG_ROM = NULL;
-  }
-
-  if (c -> m_CHR_ROM != NULL)
-  {
-    free(c -> m_CHR_ROM);
-    c -> m_CHR_ROM = NULL;
-  }
-
-  free(c);
-  c = NULL;
-  return c;
-}
-
-
-void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
+static void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
 {
   for (size_t i = 0; i != size; ++i)
   {
@@ -69,7 +15,7 @@ void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
 }
 
 
-int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
+static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads ROM Header into cartridge
 {
   size_t size = 0x10;
   byte header[size];
@@ -98,7 +44,7 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
 }
 
 
-int load_PRG_ROM (FILE* rom, cartridge_t* c)
+static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
   byte banks = header[4];
@@ -149,7 +95,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
 }
 
 
-int load_CHR_ROM (FILE* rom, cartridge_t* c)
+static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
   byte vbanks = header[5];
@@ -197,7 +143,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
 }
 
 
-void setTableMirroring (cartridge_t* c)
+static void setTableMirroring (cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isFourScreenMirroringBitSet = (header[6] & 0x08);
@@ -236,7 +182,7 @@ void setTableMirroring (cartridge_t* c)
 }
 
 
-void setMapperNumber (cartridge_t* c)
+static void setMapperNumber (cartridge_t* c)
 {
   byte* header = c -> header;
   byte m_mapperNumber = ( ( (header[6] >> 4) & 0x0f ) | (header[7] & 0xf0) );
@@ -245,7 +191,7 @@ void setMapperNumber (cartridge_t* c)
 }
 
 
-void setExtendedRAM (cartridge_t* c)
+static void setExtendedRAM (cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isExtendedRAMBitSet = (header[6] & 0x02);
@@ -255,7 +201,7 @@ void setExtendedRAM (cartridge_t* c)
 }
 
 
-void info_colorSystem (cartridge_t* c)
+static void info_colorSystem (cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isColorSystemBitSet = (header[0x0a] & 0x01);
@@ -274,7 +220,7 @@ void info_colorSystem (cartridge_t* c)
 }
 
 
-int hasTrainerSupport (FILE* rom, cartridge_t* c)
+static int hasTrainerSupport (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isTrainerBitSet = (header[6] & 0x04);
@@ -292,8 +238,9 @@ int hasTrainerSupport (FILE* rom, cartridge_t* c)
 }
 
 
-void loadFromFile (cartridge_t* c)
+static void loadFromFile (void* v_cartridge)
 {
+  cartridge_t* c = v_cartridge;
   FILE* rom = fopen("ROM", "rb");
   if (rom == NULL)
   {
@@ -337,6 +284,68 @@ void loadFromFile (cartridge_t* c)
 
   fclose(rom);
 }
+
+
+static cartridge_t* create ()
+{
+  cartridge_t* c = malloc( sizeof(cartridge_t) );
+  if (c == NULL)
+  {
+    return c;
+  }
+
+  c -> header = NULL;
+  c -> m_PRG_ROM = NULL;
+  c -> m_CHR_ROM = NULL;
+  c -> num_banks = 0;
+  c -> num_vbanks = 0;
+  c -> banks = 0;
+  c -> vbanks = 0;
+  c -> m_nameTableMirroring = 0;
+  c -> m_mapperNumber = 0;
+  c -> m_extendedRAM = false;
+
+  c -> loadFromFile = loadFromFile;
+
+  return c;
+}
+
+
+static cartridge_t* destroy (cartridge_t* c)
+{
+  if (c == NULL)
+  {
+    return c;
+  }
+
+  if (c -> header != NULL)
+  {
+    free(c -> header);
+    c -> header= NULL;
+  }
+
+  if (c -> m_PRG_ROM != NULL)
+  {
+    free(c -> m_PRG_ROM);
+    c -> m_PRG_ROM = NULL;
+  }
+
+  if (c -> m_CHR_ROM != NULL)
+  {
+    free(c -> m_CHR_ROM);
+    c -> m_CHR_ROM = NULL;
+  }
+
+  free(c);
+  c = NULL;
+  return c;
+}
+
+
+cartridge_namespace const cartridge = {
+  .create = create,
+  .destroy = destroy
+};
 
 
 // NES Emulation					May 29, 2023
