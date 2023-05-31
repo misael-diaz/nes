@@ -290,7 +290,7 @@ static void loadFromFile (void* v_cartridge)
 }
 
 
-cartridge_t* create ()
+static cartridge_t* create ()
 {
   cartridge_t* c = malloc( sizeof(cartridge_t) );
   if (c == NULL)
@@ -315,7 +315,7 @@ cartridge_t* create ()
 }
 
 
-cartridge_t* destroy (cartridge_t* c)
+static cartridge_t* destroy (cartridge_t* c)
 {
   if (c == NULL)
   {
@@ -344,6 +344,14 @@ cartridge_t* destroy (cartridge_t* c)
   c = NULL;
   return c;
 }
+
+
+cartridge_namespace const cartridge = {
+  .create = create,
+  .destroy = destroy
+};
+
+
 // NES Emulation					May 29, 2023
 //
 //			Academic Purpose

@@ -22,10 +22,11 @@
 #include <stdio.h>
 #include "cartridge.h"
 
+extern cartridge_namespace const cartridge;
 
 int main ()
 {
-  cartridge_t* c = create();
+  cartridge_t* c = cartridge.create();
   c -> loadFromFile(c);
 
   if (c -> m_PRG_ROM == NULL)
@@ -38,7 +39,7 @@ int main ()
     printf("OK\n");
   }
 
-  c = destroy(c);
+  c = cartridge.destroy(c);
   return 0;
 }
 

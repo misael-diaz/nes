@@ -20,8 +20,11 @@ typedef struct
   void (*loadFromFile)(void*);
 } cartridge_t;
 
-cartridge_t* create();
-cartridge_t* destroy(cartridge_t*);
+typedef struct
+{
+  cartridge_t* (*create)();
+  cartridge_t* (*destroy)(cartridge_t*);
+} cartridge_namespace;
 
 #endif
 
