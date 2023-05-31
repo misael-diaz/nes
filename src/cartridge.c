@@ -10,7 +10,7 @@
 
 
 
-void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
+static void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
 {
   for (size_t i = 0; i != size; ++i)
   {
@@ -19,7 +19,7 @@ void util_copy (size_t size, byte* restrict dst, const byte* restrict src)
 }
 
 
-int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
+static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
 {
   size_t size = 0x10;
   byte header[size];
@@ -48,7 +48,7 @@ int load_H_ROM (FILE* rom, cartridge_t* c)	// loads Header of ROM into cartridge
 }
 
 
-int load_PRG_ROM (FILE* rom, cartridge_t* c)
+static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
   byte banks = header[4];
@@ -99,7 +99,7 @@ int load_PRG_ROM (FILE* rom, cartridge_t* c)
 }
 
 
-int load_CHR_ROM (FILE* rom, cartridge_t* c)
+static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
   byte vbanks = header[5];
@@ -147,7 +147,7 @@ int load_CHR_ROM (FILE* rom, cartridge_t* c)
 }
 
 
-void setTableMirroring (cartridge_t* c)
+static void setTableMirroring (cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isFourScreenMirroringBitSet = (header[6] & 0x08);
@@ -186,7 +186,7 @@ void setTableMirroring (cartridge_t* c)
 }
 
 
-void setMapperNumber (cartridge_t* c)
+static void setMapperNumber (cartridge_t* c)
 {
   byte* header = c -> header;
   byte m_mapperNumber = ( ( (header[6] >> 4) & 0x0f ) | (header[7] & 0xf0) );
@@ -195,7 +195,7 @@ void setMapperNumber (cartridge_t* c)
 }
 
 
-void setExtendedRAM (cartridge_t* c)
+static void setExtendedRAM (cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isExtendedRAMBitSet = (header[6] & 0x02);
@@ -205,7 +205,7 @@ void setExtendedRAM (cartridge_t* c)
 }
 
 
-void info_colorSystem (cartridge_t* c)
+static void info_colorSystem (cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isColorSystemBitSet = (header[0x0a] & 0x01);
@@ -224,7 +224,7 @@ void info_colorSystem (cartridge_t* c)
 }
 
 
-int hasTrainerSupport (FILE* rom, cartridge_t* c)
+static int hasTrainerSupport (FILE* rom, cartridge_t* c)
 {
   byte* header = c -> header;
   byte const isTrainerBitSet = (header[6] & 0x04);
@@ -242,8 +242,9 @@ int hasTrainerSupport (FILE* rom, cartridge_t* c)
 }
 
 
-void loadFromFile (cartridge_t* c)
+static void loadFromFile (void* v_cartridge)
 {
+  cartridge_t* c = v_cartridge;
   FILE* rom = fopen("ROM", "rb");
   if (rom == NULL)
   {
@@ -307,6 +308,8 @@ cartridge_t* create ()
   c -> m_nameTableMirroring = 0;
   c -> m_mapperNumber = 0;
   c -> m_extendedRAM = false;
+
+  c -> loadFromFile = loadFromFile;
 
   return c;
 }

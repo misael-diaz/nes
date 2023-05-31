@@ -17,11 +17,11 @@ typedef struct
   byte m_nameTableMirroring;
   byte m_mapperNumber;
   bool m_extendedRAM;
+  void (*loadFromFile)(void*);
 } cartridge_t;
 
 cartridge_t* create();
 cartridge_t* destroy(cartridge_t*);
-void loadFromFile(cartridge_t*);
 
 #endif
 

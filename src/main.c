@@ -26,7 +26,7 @@
 int main ()
 {
   cartridge_t* c = create();
-  loadFromFile(c);
+  c -> loadFromFile(c);
 
   if (c -> m_PRG_ROM == NULL)
   {
