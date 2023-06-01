@@ -321,10 +321,10 @@ static void loadFromFile (void* v_cartridge)
 }
 
 
-static byte_t getNameTableMirroring (void* v_cartridge)
+static byte_t getNameTableMirroring (const void* v_cartridge)
 {
-  cartridge_t* c = v_cartridge;
-  data_t* data = c -> data;
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
   byte_t ntm = data -> m_nameTableMirroring;
   return ntm;
 }
