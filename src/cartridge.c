@@ -407,7 +407,7 @@ static cartridge_t* destroy (cartridge_t* c)
 }
 
 
-cartridge_namespace const cartridge = {
+cartridge_namespace_t const cartridge = {
   .create = create,
   .destroy = destroy
 };
