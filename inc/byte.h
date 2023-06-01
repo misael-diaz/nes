@@ -1,7 +1,7 @@
 #ifndef NES_BYTE_TYPE_H
 #define NES_BYTE_TYPE_H
 
-typedef unsigned char byte;
+typedef unsigned char byte_t;
 
 #endif
 
