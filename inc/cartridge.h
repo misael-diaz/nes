@@ -14,6 +14,7 @@ typedef struct
   // public:
   void (*loadFromFile) (void*);
   byte_t (*getNameTableMirroring) (const void*);
+  bool (*hasExtendedRAM) (const void*);
 } cartridge_t;
 
 typedef struct
