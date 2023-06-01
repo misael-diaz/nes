@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "cartridge.h"
-#include "byte.h"
 
 
 #define NES_FAILURE_STATE ( (int) 0xffffffff )
@@ -185,14 +184,7 @@ static void setTableMirroring (cartridge_t* c)
   byte_t const isFourScreenMirroringBitSet = (header[6] & 0x08);
   if (isFourScreenMirroringBitSet)
   {
-    enum nameTableMirroring // from Mapper, placed here temporarily
-    {
-      Horizontal = 0,
-      Vertical = 1,
-      FourScreen = 8
-    };
-    enum nameTableMirroring mirroring;
-    mirroring = FourScreen;
+    nameTableMirroring_t mirroring = FourScreen;
     byte_t m_nameTableMirroring = mirroring;
     printf("Name Table Mirroring: %u \n", m_nameTableMirroring);
     d -> m_nameTableMirroring = m_nameTableMirroring;
@@ -329,6 +321,15 @@ static void loadFromFile (void* v_cartridge)
 }
 
 
+static byte_t getNameTableMirroring (void* v_cartridge)
+{
+  cartridge_t* c = v_cartridge;
+  data_t* data = c -> data;
+  byte_t ntm = data -> m_nameTableMirroring;
+  return ntm;
+}
+
+
 static cartridge_t* create ()
 {
   cartridge_t* c = malloc( sizeof(cartridge_t) );
@@ -359,6 +360,7 @@ static cartridge_t* create ()
   d -> m_extendedRAM = false;
 
   c -> loadFromFile = loadFromFile;
+  c -> getNameTableMirroring = getNameTableMirroring;
 
   return c;
 }
