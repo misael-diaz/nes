@@ -330,6 +330,15 @@ static byte_t getNameTableMirroring (const void* v_cartridge)
 }
 
 
+static bool hasExtendedRAM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  bool ret = data -> m_extendedRAM;
+  return ret;
+}
+
+
 static cartridge_t* create ()
 {
   cartridge_t* c = malloc( sizeof(cartridge_t) );
@@ -361,6 +370,7 @@ static cartridge_t* create ()
 
   c -> loadFromFile = loadFromFile;
   c -> getNameTableMirroring = getNameTableMirroring;
+  c -> hasExtendedRAM = hasExtendedRAM;
 
   return c;
 }
