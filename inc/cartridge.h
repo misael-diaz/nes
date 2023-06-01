@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "mirroring.h"
+
 typedef struct
 {
   // private:

@@ -185,14 +185,7 @@ static void setTableMirroring (cartridge_t* c)
   byte_t const isFourScreenMirroringBitSet = (header[6] & 0x08);
   if (isFourScreenMirroringBitSet)
   {
-    enum nameTableMirroring // from Mapper, placed here temporarily
-    {
-      Horizontal = 0,
-      Vertical = 1,
-      FourScreen = 8
-    };
-    enum nameTableMirroring mirroring;
-    mirroring = FourScreen;
+    nameTableMirroring_t mirroring = FourScreen;
     byte_t m_nameTableMirroring = mirroring;
     printf("Name Table Mirroring: %u \n", m_nameTableMirroring);
     d -> m_nameTableMirroring = m_nameTableMirroring;
