@@ -12,14 +12,14 @@ typedef struct
   // private:
   void* data;
   // public:
-  void (*loadFromFile)(void*);
-  byte_t (*getNameTableMirroring)(void*);
+  void (*loadFromFile) (void*);
+  byte_t (*getNameTableMirroring) (void*);
 } cartridge_t;
 
 typedef struct
 {
-  cartridge_t* (*create)();
-  cartridge_t* (*destroy)(cartridge_t*);
+  cartridge_t* (*create) (void);
+  cartridge_t* (*destroy) (cartridge_t*);
 } cartridge_namespace_t;
 
 #endif
