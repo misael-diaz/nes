@@ -13,7 +13,7 @@ typedef struct
   void* data;
   // public:
   void (*loadFromFile) (void*);
-  byte_t (*getNameTableMirroring) (void*);
+  byte_t (*getNameTableMirroring) (const void*);
 } cartridge_t;
 
 typedef struct
