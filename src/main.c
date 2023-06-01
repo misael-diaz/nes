@@ -18,16 +18,21 @@
 // [0] https://github.com/amhndu/SimpleNES
 // [1] https://www.howtogeek.com/428987/whats-the-difference-between-ntsc-and-pal/
 
-
 #include <stdio.h>
+
 #include "cartridge.h"
+#include "mapper.h"
 
 extern cartridge_namespace_t const cartridge;
+extern mapper_namespace_t const mapper;
 
 int main ()
 {
   cartridge_t* c = cartridge.create();
   c -> loadFromFile(c);
+
+  mapperKind_t k = NROM;
+  mapper_t* map = mapper.create(c, k);
 
   /*
   if (c -> m_PRG_ROM == NULL)
@@ -41,6 +46,7 @@ int main ()
   }
   */
 
+  map = mapper.destroy(map);
   c = cartridge.destroy(c);
   return 0;
 }
