@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "cartridge.h"
-#include "byte.h"
 
 
 #define NES_FAILURE_STATE ( (int) 0xffffffff )
@@ -322,6 +321,15 @@ static void loadFromFile (void* v_cartridge)
 }
 
 
+static byte_t getNameTableMirroring (void* v_cartridge)
+{
+  cartridge_t* c = v_cartridge;
+  data_t* data = c -> data;
+  byte_t ntm = data -> m_nameTableMirroring;
+  return ntm;
+}
+
+
 static cartridge_t* create ()
 {
   cartridge_t* c = malloc( sizeof(cartridge_t) );
@@ -352,6 +360,7 @@ static cartridge_t* create ()
   d -> m_extendedRAM = false;
 
   c -> loadFromFile = loadFromFile;
+  c -> getNameTableMirroring = getNameTableMirroring;
 
   return c;
 }

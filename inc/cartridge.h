@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "byte.h"
 #include "mirroring.h"
 
 typedef struct
@@ -12,6 +13,7 @@ typedef struct
   void* data;
   // public:
   void (*loadFromFile)(void*);
+  byte_t (*getNameTableMirroring)(void*);
 } cartridge_t;
 
 typedef struct
