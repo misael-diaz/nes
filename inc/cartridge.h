@@ -16,7 +16,7 @@ typedef struct
 {
   cartridge_t* (*create)();
   cartridge_t* (*destroy)(cartridge_t*);
-} cartridge_namespace;
+} cartridge_namespace_t;
 
 #endif
 

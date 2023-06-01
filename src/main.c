@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include "cartridge.h"
 
-extern cartridge_namespace const cartridge;
+extern cartridge_namespace_t const cartridge;
 
 int main ()
 {
