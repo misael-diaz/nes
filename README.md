@@ -61,12 +61,23 @@ Possible output if all goes well:
 header: N E S 1a
 16KB PRG-ROM Banks: 8
 8KB CHR-ROM Banks: 0
-ROM with CHR-RAM
 Name Table Mirroring: Vertical
 Mapper Number: 1
 Extended CPU RAM: 0
 ROM is NTSC compatible
+ROM size: 131072
+VROM size: 0
 OK
+Using PRG-ROM OK
+Uses Character RAM OK
+mirroring callback from mapper
+Mapper::Mapper: 7 wrote 1 to bank-PRG
+Mapper::Mapper: 7 wrote 255 to CHR at address 0x1000
+Mapper::Mapper: 7 read 76 from PRG at address 0x8000
+Mapper::Mapper: 7 read 255 CHR at address 0x1000
+Mapper::Mapper: 7 name table mirroring: 9
+Mapper::Mapper: 7 has extended RAM: 0
+Mapper::Mapper: 7 Mapper::scalineIRQ
 ```
 
 If you see something similar that means that the emulator was able to load the ROM.
