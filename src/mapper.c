@@ -7,6 +7,7 @@ typedef struct
 {
   cartridge_t* m_cartridge;
   mapperKind_t m_kind;
+  void* next;
 } data_t;
 
 

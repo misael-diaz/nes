@@ -23,14 +23,16 @@ INC = -I../../nes/inc
 # source codes
 CARTRIDGE_SRC = cartridge.c
 MAPPER_SRC = mapper.c
+MAPPER_AXROM_SRC = mapperAxROM.c
 MAIN_SRC = main.c
 
 
 # object files
 CARTRIDGE_OBJ = cartridge.o
 MAPPER_OBJ = mapper.o
+MAPPER_AXROM_OBJ = mapperAxROM.o
 MAIN_OBJ = main.o
-OBJECTS = $(CARTRIDGE_OBJ) $(MAPPER_OBJ) $(MAIN_OBJ)
+OBJECTS = $(CARTRIDGE_OBJ) $(MAPPER_OBJ) $(MAPPER_AXROM_OBJ) $(MAIN_OBJ)
 
 
 # binaries
