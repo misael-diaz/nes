@@ -130,47 +130,51 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
   d -> vbanks = vbanks;
   printf("8KB CHR-ROM Banks: %u \n", vbanks);
 
-  if (vbanks)
+  if (vbanks == 0)
   {
-    size_t num_vbanks = (0x2000 * vbanks);
-    byte_t b_CHR_ROM[num_vbanks];
-    size_t count = fread(b_CHR_ROM, sizeof(byte_t), num_vbanks, rom);
-    if (num_vbanks != count)
-    {
-      printf("Failed to read CHR-ROM!\n");
-      free(d -> header);
-      d -> header = NULL;
-      header = NULL;
-      free(d -> m_PRG_ROM);
-      d -> m_PRG_ROM = NULL;
-      free(c -> data);
-      c -> data = NULL;
-      d = NULL;
-      fclose(rom);
-      return NES_FAILURE_STATE;
-    }
-    d -> num_vbanks = num_vbanks;
-
-    d -> m_CHR_ROM = (byte_t*) malloc( num_vbanks * sizeof(byte_t) );
-
-    if (d -> m_CHR_ROM == NULL)
-    {
-      printf("failed to allocate memory for CHR-ROM!\n");
-      free(d -> header);
-      d -> header = NULL;
-      header = NULL;
-      free(d -> m_PRG_ROM);
-      d -> m_PRG_ROM = NULL;
-      free(c -> data);
-      c -> data = NULL;
-      d = NULL;
-      fclose(rom);
-      return NES_FAILURE_STATE;
-    }
-
-    byte_t* m_CHR_ROM = d -> m_CHR_ROM;
-    util_copy(num_vbanks, m_CHR_ROM, b_CHR_ROM);
+    d -> num_vbanks = 0;
+    d -> m_CHR_ROM = NULL;
+    return NES_SUCCESS_STATE;
   }
+
+  size_t num_vbanks = (0x2000 * vbanks);
+  byte_t b_CHR_ROM[num_vbanks];
+  size_t count = fread(b_CHR_ROM, sizeof(byte_t), num_vbanks, rom);
+  if (num_vbanks != count)
+  {
+    printf("Failed to read CHR-ROM!\n");
+    free(d -> header);
+    d -> header = NULL;
+    header = NULL;
+    free(d -> m_PRG_ROM);
+    d -> m_PRG_ROM = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
+    fclose(rom);
+    return NES_FAILURE_STATE;
+  }
+  d -> num_vbanks = num_vbanks;
+
+  d -> m_CHR_ROM = (byte_t*) malloc( num_vbanks * sizeof(byte_t) );
+
+  if (d -> m_CHR_ROM == NULL)
+  {
+    printf("failed to allocate memory for CHR-ROM!\n");
+    free(d -> header);
+    d -> header = NULL;
+    header = NULL;
+    free(d -> m_PRG_ROM);
+    d -> m_PRG_ROM = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
+    fclose(rom);
+    return NES_FAILURE_STATE;
+  }
+
+  byte_t* m_CHR_ROM = d -> m_CHR_ROM;
+  util_copy(num_vbanks, m_CHR_ROM, b_CHR_ROM);
 
   printf("ROM with CHR-RAM\n");
   return NES_SUCCESS_STATE;
@@ -321,6 +325,42 @@ static void loadFromFile (void* v_cartridge)
 }
 
 
+static size_t getSizeROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  size_t size = data -> num_banks;
+  return size;
+}
+
+
+static size_t getSizeVROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  size_t size = data -> num_vbanks;
+  return size;
+}
+
+
+static byte_t* getROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  byte_t* m_PRG_ROM = data -> m_PRG_ROM;
+  return m_PRG_ROM;
+}
+
+
+static byte_t* getVROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  byte_t* m_CHR_ROM = data -> m_CHR_ROM;
+  return m_CHR_ROM;
+}
+
+
 static byte_t getNameTableMirroring (const void* v_cartridge)
 {
   const cartridge_t* c = v_cartridge;
@@ -369,6 +409,10 @@ static cartridge_t* create ()
   d -> m_extendedRAM = false;
 
   c -> loadFromFile = loadFromFile;
+  c -> getROM = getROM;
+  c -> getVROM = getVROM;
+  c -> getSizeROM = getSizeROM;
+  c -> getSizeVROM = getSizeVROM;
   c -> getNameTableMirroring = getNameTableMirroring;
   c -> hasExtendedRAM = hasExtendedRAM;
 
