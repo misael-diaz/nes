@@ -74,6 +74,7 @@ int main ()
   map -> writeCHR(map, 0x1000, 0xff);
   map -> readPRG(map, 0x0000);
   map -> readCHR(map, 0x1000);
+  map -> readCHR(map, 0x4000);	// attempts to read Character RAM at invalid address
   data_t* data = map -> data;
   mapperKind_t k = data -> m_kind;
   nameTableMirroring_t ntm = map -> getNameTableMirroring(map);
