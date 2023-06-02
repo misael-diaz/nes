@@ -80,7 +80,7 @@ Mapper::Mapper: 7 has extended RAM: 0
 Mapper::Mapper: 7 Mapper::scalineIRQ
 ```
 
-If you see something similar that means that the emulator was able to load the ROM.
-If not, feel free to create an issue.
+If you see something similar that means that the emulator was able to load the ROM
+and instantiate the AxROM mapper. If not, feel free to create an issue.
 
 That is all that has been implemented so far. Not much, but exciting nevertheless!
