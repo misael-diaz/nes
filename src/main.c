@@ -34,6 +34,15 @@ int main ()
   mapperKind_t k = NROM;
   mapper_t* map = mapper.create(c, k);
 
+  map -> readPRG(map, 0);
+  map -> readCHR(map, 0);
+  map -> writePRG(map, 0, 0);
+  map -> writeCHR(map, 0, 0);
+  nameTableMirroring_t ntm = map -> getNameTableMirroring(map);
+  printf("Mapper::Mapper: %d name table mirroring: %d\n", k, ntm);
+  printf("Mapper::Mapper: %d has extended RAM: %d\n", k, map -> hasExtendedRAM(map));
+  map -> scanlineIRQ(map);
+
   /*
   if (c -> m_PRG_ROM == NULL)
   {
