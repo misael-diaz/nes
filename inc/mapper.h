@@ -21,13 +21,13 @@ typedef struct	// Mapper
   // protected:
   void* data;
   // public:
-  byte_t (*readPRG) (const address_t);
-  byte_t (*readCHR) (const address_t);
-  void (*writePRG) (const address_t, const byte_t);
-  void (*writeCHR) (const address_t, const byte_t);
+  byte_t (*readPRG) (const void*, const address_t);
+  byte_t (*readCHR) (const void*, const address_t);
+  void (*writePRG) (void*, const address_t, const byte_t);
+  void (*writeCHR) (void*, const address_t, const byte_t);
   nameTableMirroring_t (*getNameTableMirroring) (const void*);
   bool (*hasExtendedRAM) (const void*);
-  void (*scanlineIRQ) (void);
+  void (*scanlineIRQ) (void*);
 } mapper_t;
 
 typedef struct

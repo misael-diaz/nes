@@ -10,6 +10,44 @@ typedef struct
 } data_t;
 
 
+static byte_t readPRG (const void* v_mapper, const address_t addr)
+{
+  const mapper_t* mapper = v_mapper;
+  const data_t* data = mapper -> data;
+  mapperKind_t kind = data -> m_kind;
+  printf("Mapper::Mapper: %d reading PRG address %x ... done\n", kind, addr);
+  return 0;
+}
+
+
+static byte_t readCHR (const void* v_mapper, const address_t addr)
+{
+  const mapper_t* mapper = v_mapper;
+  const data_t* data = mapper -> data;
+  mapperKind_t kind = data -> m_kind;
+  printf("Mapper::Mapper: %d reading CHR address %x ... done\n", kind, addr);
+  return 0;
+}
+
+
+static void writePRG (void* v_mapper, const address_t addr, const byte_t byte)
+{
+  mapper_t* mapper = v_mapper;
+  const data_t* data = mapper -> data;
+  mapperKind_t kind = data -> m_kind;
+  printf("Mapper::Mapper: %d writing %x PRG address %x ... done\n", kind, byte, addr);
+}
+
+
+static void writeCHR (void* v_mapper, const address_t addr, const byte_t byte)
+{
+  mapper_t* mapper = v_mapper;
+  const data_t* data = mapper -> data;
+  mapperKind_t kind = data -> m_kind;
+  printf("Mapper::Mapper: %d writing %x CHR address %x ... done\n", kind, byte, addr);
+}
+
+
 static nameTableMirroring_t getNameTableMirroring (const void* v_mapper)
 {
   const mapper_t* mapper = v_mapper;
@@ -27,6 +65,15 @@ static bool hasExtendedRAM (const void* v_mapper)
   const cartridge_t* m_cartridge = data -> m_cartridge;
   bool ret = m_cartridge -> hasExtendedRAM(m_cartridge);
   return ret;
+}
+
+
+static void scanlineIRQ (void* v_mapper)
+{
+  mapper_t* mapper = v_mapper;
+  const data_t* data = mapper -> data;
+  mapperKind_t kind = data -> m_kind;
+  printf("Mapper::Mapper: %d Mapper::scalineIRQ\n", kind);
 }
 
 
@@ -51,13 +98,13 @@ static mapper_t* create (cartridge_t* cart, const mapperKind_t kind)
   data -> m_cartridge = cart;
   data -> m_kind = kind;
 
-  mapper -> readPRG = NULL;
-  mapper -> readCHR = NULL;
-  mapper -> writePRG = NULL;
-  mapper -> writeCHR = NULL;
+  mapper -> readPRG = readPRG;
+  mapper -> readCHR = readCHR;
+  mapper -> writePRG = writePRG;
+  mapper -> writeCHR = writeCHR;
   mapper -> getNameTableMirroring = getNameTableMirroring;
   mapper -> hasExtendedRAM = hasExtendedRAM;
-  mapper -> scanlineIRQ = NULL;
+  mapper -> scanlineIRQ = scanlineIRQ;
 
   return mapper;
 }
