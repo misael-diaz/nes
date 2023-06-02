@@ -172,7 +172,7 @@ static mapper_t* create (cartridge_t* cart, void (*mirroring_cb) (void))
     map -> m_characterRAM = (byte_t*) malloc( size_characterRAM * sizeof(byte_t) );
     for (size_t i = 0; i != size_characterRAM; ++i)
     {
-      map -> m_characterRAM[i] = 0x00;
+      map -> m_characterRAM[i] = ( (byte_t) 0x00 );
     }
     printf("Uses Character RAM OK\n");
   }
