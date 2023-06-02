@@ -85,7 +85,7 @@ and instantiate the AxROM mapper. If not, feel free to create an issue.
 
 That is all that has been implemented so far. Not much, but exciting nevertheless!
 
-# Checking for Memory Errors with Valgrind
+## Checking for Memory Errors with Valgrind
 
 Valgrind is a console application for debugging and profiling Linux executables
 that provides various debugging and profiling tools.
