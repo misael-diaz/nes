@@ -129,7 +129,7 @@ Mapper::Mapper: 7 Mapper::scalineIRQ
 ==23765==     in use at exit: 0 bytes in 0 blocks
 ==23765==   total heap usage: 11 allocs, 11 frees, 145,128 bytes allocated
 ==23765==
-==23765== **All heap blocks were freed -- no leaks are possible**
+==23765== All heap blocks were freed -- no leaks are possible
 ==23765==
 ==23765== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
