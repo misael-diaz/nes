@@ -36,7 +36,7 @@ static byte_t readPRG (const void* v_core, const address_t addr)
   const mapperAxROM_t* map = data -> next;
   const byte_t* PRG = cart -> getROM(cart);
   const uint32_t bank_PRG = map -> m_bank_PRG;
-  // NOTE: mixed type arithmetic, address is uint16_t and bank-PRG is uint32_t
+  // NOTE: mixed type arithmetic (from snes), address is uint16_t and bank-PRG is uint32_t
   const uint32_t idx = ( (bank_PRG * 0x8000) + (addr & 0x7fff) );
   const byte_t byte = PRG[idx];
   printf("Mapper::Mapper: %d read %u from PRG at address 0x%x\n", kind, byte, idx);
