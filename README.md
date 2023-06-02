@@ -84,3 +84,52 @@ If you see something similar that means that the emulator was able to load the R
 and instantiate the AxROM mapper. If not, feel free to create an issue.
 
 That is all that has been implemented so far. Not much, but exciting nevertheless!
+
+# Checking for Memory Errors with Valgrind
+
+Valgrind is a console application for debugging and profiling Linux executables
+that provides various debugging and profiling tools.
+
+To check the NES emulator for memory errors you can invoke valgrind's memcheck tool via:
+
+```sh
+valgrind -s ./nes-emulator
+```
+
+possible output:
+
+```
+==23765== Memcheck, a memory error detector
+==23765== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==23765== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==23765== Command: ./nes-emulator
+==23765==
+header: N E S 1a
+16KB PRG-ROM Banks: 8
+8KB CHR-ROM Banks: 0
+Name Table Mirroring: Vertical
+Mapper Number: 1
+Extended CPU RAM: 0
+ROM is NTSC compatible
+ROM size: 131072
+VROM size: 0
+OK
+Using PRG-ROM OK
+Uses Character RAM OK
+mirroring callback from mapper
+Mapper::Mapper: 7 wrote 1 to bank-PRG
+Mapper::Mapper: 7 wrote 255 to CHR at address 0x1000
+Mapper::Mapper: 7 read 76 from PRG at address 0x8000
+Mapper::Mapper: 7 read 255 CHR at address 0x1000
+Mapper::Mapper: 7 name table mirroring: 9
+Mapper::Mapper: 7 has extended RAM: 0
+Mapper::Mapper: 7 Mapper::scalineIRQ
+==23765==
+==23765== HEAP SUMMARY:
+==23765==     in use at exit: 0 bytes in 0 blocks
+==23765==   total heap usage: 11 allocs, 11 frees, 145,128 bytes allocated
+==23765==
+==23765== **All heap blocks were freed -- no leaks are possible**
+==23765==
+==23765== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
