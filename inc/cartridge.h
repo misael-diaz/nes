@@ -13,6 +13,10 @@ typedef struct
   void* data;
   // public:
   void (*loadFromFile) (void*);
+  byte_t* (*getROM) (const void*);
+  byte_t* (*getVROM) (const void*);
+  size_t (*getSizeROM) (const void*);
+  size_t (*getSizeVROM) (const void*);
   byte_t (*getNameTableMirroring) (const void*);
   bool (*hasExtendedRAM) (const void*);
 } cartridge_t;

@@ -23,6 +23,9 @@
 #include "cartridge.h"
 #include "mapper.h"
 
+#define SUCCESS ( (int) 0x00000000 )
+#define FAILURE ( (int) 0xffffffff )
+
 extern cartridge_namespace_t const cartridge;
 extern mapper_namespace_t const mapper;
 
@@ -30,6 +33,23 @@ int main ()
 {
   cartridge_t* c = cartridge.create();
   c -> loadFromFile(c);
+
+  if (c == NULL)
+  {
+    return FAILURE;
+  }
+
+  printf("ROM size: %lu \n", c -> getSizeROM(c));
+  if (c -> getROM(c) == NULL)
+  {
+    printf("PRG-ROM NOT OK\n");
+  }
+
+  printf("VROM size: %lu \n", c -> getSizeVROM(c));
+  if (c -> getVROM(c) == NULL)
+  {
+    printf("OK\n");
+  }
 
   mapperKind_t k = NROM;
   mapper_t* map = mapper.create(c, k);
@@ -43,21 +63,9 @@ int main ()
   printf("Mapper::Mapper: %d has extended RAM: %d\n", k, map -> hasExtendedRAM(map));
   map -> scanlineIRQ(map);
 
-  /*
-  if (c -> m_PRG_ROM == NULL)
-  {
-    printf("PRG-ROM NOT OK\n");
-  }
-
-  if (c -> m_CHR_ROM == NULL)
-  {
-    printf("OK\n");
-  }
-  */
-
   map = mapper.destroy(map);
   c = cartridge.destroy(c);
-  return 0;
+  return SUCCESS;
 }
 
 

@@ -325,6 +325,42 @@ static void loadFromFile (void* v_cartridge)
 }
 
 
+static size_t getSizeROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  size_t size = data -> num_banks;
+  return size;
+}
+
+
+static size_t getSizeVROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  size_t size = data -> num_vbanks;
+  return size;
+}
+
+
+static byte_t* getROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  byte_t* m_PRG_ROM = data -> m_PRG_ROM;
+  return m_PRG_ROM;
+}
+
+
+static byte_t* getVROM (const void* v_cartridge)
+{
+  const cartridge_t* c = v_cartridge;
+  const data_t* data = c -> data;
+  byte_t* m_CHR_ROM = data -> m_CHR_ROM;
+  return m_CHR_ROM;
+}
+
+
 static byte_t getNameTableMirroring (const void* v_cartridge)
 {
   const cartridge_t* c = v_cartridge;
@@ -373,6 +409,10 @@ static cartridge_t* create ()
   d -> m_extendedRAM = false;
 
   c -> loadFromFile = loadFromFile;
+  c -> getROM = getROM;
+  c -> getVROM = getVROM;
+  c -> getSizeROM = getSizeROM;
+  c -> getSizeVROM = getSizeVROM;
   c -> getNameTableMirroring = getNameTableMirroring;
   c -> hasExtendedRAM = hasExtendedRAM;
 
