@@ -130,47 +130,51 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
   d -> vbanks = vbanks;
   printf("8KB CHR-ROM Banks: %u \n", vbanks);
 
-  if (vbanks)
+  if (vbanks == 0)
   {
-    size_t num_vbanks = (0x2000 * vbanks);
-    byte_t b_CHR_ROM[num_vbanks];
-    size_t count = fread(b_CHR_ROM, sizeof(byte_t), num_vbanks, rom);
-    if (num_vbanks != count)
-    {
-      printf("Failed to read CHR-ROM!\n");
-      free(d -> header);
-      d -> header = NULL;
-      header = NULL;
-      free(d -> m_PRG_ROM);
-      d -> m_PRG_ROM = NULL;
-      free(c -> data);
-      c -> data = NULL;
-      d = NULL;
-      fclose(rom);
-      return NES_FAILURE_STATE;
-    }
-    d -> num_vbanks = num_vbanks;
-
-    d -> m_CHR_ROM = (byte_t*) malloc( num_vbanks * sizeof(byte_t) );
-
-    if (d -> m_CHR_ROM == NULL)
-    {
-      printf("failed to allocate memory for CHR-ROM!\n");
-      free(d -> header);
-      d -> header = NULL;
-      header = NULL;
-      free(d -> m_PRG_ROM);
-      d -> m_PRG_ROM = NULL;
-      free(c -> data);
-      c -> data = NULL;
-      d = NULL;
-      fclose(rom);
-      return NES_FAILURE_STATE;
-    }
-
-    byte_t* m_CHR_ROM = d -> m_CHR_ROM;
-    util_copy(num_vbanks, m_CHR_ROM, b_CHR_ROM);
+    d -> num_vbanks = 0;
+    d -> m_CHR_ROM = NULL;
+    return NES_SUCCESS_STATE;
   }
+
+  size_t num_vbanks = (0x2000 * vbanks);
+  byte_t b_CHR_ROM[num_vbanks];
+  size_t count = fread(b_CHR_ROM, sizeof(byte_t), num_vbanks, rom);
+  if (num_vbanks != count)
+  {
+    printf("Failed to read CHR-ROM!\n");
+    free(d -> header);
+    d -> header = NULL;
+    header = NULL;
+    free(d -> m_PRG_ROM);
+    d -> m_PRG_ROM = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
+    fclose(rom);
+    return NES_FAILURE_STATE;
+  }
+  d -> num_vbanks = num_vbanks;
+
+  d -> m_CHR_ROM = (byte_t*) malloc( num_vbanks * sizeof(byte_t) );
+
+  if (d -> m_CHR_ROM == NULL)
+  {
+    printf("failed to allocate memory for CHR-ROM!\n");
+    free(d -> header);
+    d -> header = NULL;
+    header = NULL;
+    free(d -> m_PRG_ROM);
+    d -> m_PRG_ROM = NULL;
+    free(c -> data);
+    c -> data = NULL;
+    d = NULL;
+    fclose(rom);
+    return NES_FAILURE_STATE;
+  }
+
+  byte_t* m_CHR_ROM = d -> m_CHR_ROM;
+  util_copy(num_vbanks, m_CHR_ROM, b_CHR_ROM);
 
   printf("ROM with CHR-RAM\n");
   return NES_SUCCESS_STATE;
