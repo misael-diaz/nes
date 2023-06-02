@@ -59,14 +59,17 @@ static byte_t readCHR (const void* v_core, const address_t addr)
   }
 
   size_t const size_characterRAM = map -> m_size_characterRAM;
-  if (addr < size_characterRAM)
+  if (addr >= size_characterRAM)
   {
-    byte_t const byte = CHR[addr];
-    printf("Mapper::Mapper: %d read %u CHR at address 0x%x\n", kind, byte, addr);
-    return byte;
+    const char log [] = "Mapper::Mapper: %d attempted to read CHR "
+			"at invalid address 0x%x\n";
+    printf(log, kind, addr);
+    return 0;
   }
 
-  return 0;
+  byte_t const byte = CHR[addr];
+  printf("Mapper::Mapper: %d read %u CHR at address 0x%x\n", kind, byte, addr);
+  return byte;
 }
 
 
