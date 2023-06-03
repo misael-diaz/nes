@@ -195,8 +195,8 @@ static void setTableMirroring (cartridge_t* c)
   }
   else
   {
-    byte_t const isTableMirroringBitSet = (header[6] & 0x01);
-    byte_t m_nameTableMirroring = isTableMirroringBitSet;
+    byte_t const isVerticalMirroringEnabled = (header[6] & 0x01);
+    byte_t m_nameTableMirroring = isVerticalMirroringEnabled;
     switch (m_nameTableMirroring)
     {
       case 0:
