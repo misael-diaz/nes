@@ -136,7 +136,7 @@ static mapper_t* create (cartridge_t* cart, void (*mirroring_cb) (void))
     return core;
   }
 
-  // constructs derived AxRMO mapper (or extending class):
+  // constructs derived AxROM mapper (or extending class):
   mapperAxROM_t* map = malloc( sizeof(mapperAxROM_t) );
   if (map == NULL)
   {
