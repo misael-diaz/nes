@@ -65,7 +65,7 @@ static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t banks = header[4];
+  byte_t banks = header[4];	// see iNES file format: https://www.nesdev.org/wiki/INES
   printf("16KB PRG-ROM Banks: %u \n", banks);
   if (!banks)
   {
@@ -83,7 +83,7 @@ static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 
   d -> banks = banks;
 
-  size_t num_banks = (0x4000 * banks);
+  size_t num_banks = (0x4000 * banks);	// PRG ROM size (bytes) see iNES file format
   byte_t b_PRG_ROM[num_banks];
   size_t count = fread(b_PRG_ROM, sizeof(byte_t), num_banks, rom);
   if (num_banks != count)
@@ -126,7 +126,7 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t vbanks = header[5];
+  byte_t vbanks = header[5];	// see iNES file format https://www.nesdev.org/wiki/INES
   d -> vbanks = vbanks;
   printf("8KB CHR-ROM Banks: %u \n", vbanks);
 
@@ -137,7 +137,7 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
     return NES_SUCCESS_STATE;
   }
 
-  size_t num_vbanks = (0x2000 * vbanks);
+  size_t num_vbanks = (0x2000 * vbanks);	// CHR ROM size (bytes), see iNES format
   byte_t b_CHR_ROM[num_vbanks];
   size_t count = fread(b_CHR_ROM, sizeof(byte_t), num_vbanks, rom);
   if (num_vbanks != count)
