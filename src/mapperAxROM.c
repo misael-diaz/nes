@@ -192,7 +192,7 @@ static mapper_t* create (cartridge_t* cart, void (*mirroring_cb) (void))
 
   // initializes mapper AxROM data:
   map -> m_core = core;
-  map -> m_bank_PRG = ( (uint32_t) 0 );
+  map -> m_bank_PRG = ( (uint32_t) 0x00000000 );
   map -> m_size_ROM = size_ROM;
   map -> m_size_VROM = size_VROM;
   map -> m_size_characterRAM = size_characterRAM;
