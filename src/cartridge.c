@@ -281,7 +281,7 @@ static void info_colorSystem (cartridge_t* c)
 }
 
 
-static int hasTrainerSupport (FILE* rom, cartridge_t* c)
+static int hasTrainerSupport (FILE* rom, cartridge_t* c)	// ref[2]
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
