@@ -218,8 +218,8 @@ static void setMapperNumber (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const lowerMapperNumberNybble = ( (header[6] >> 4) & 0x0f ); // ref[2]
-  byte_t const upperMapperNumberNybble = (header[7] & 0xf0);          // ref[3]
+  byte_t const lowerMapperNumberNybble = ( (header[6] >> 4) & 0x0f );	// ref[2]
+  byte_t const upperMapperNumberNybble = (header[7] & 0xf0);		// ref[3]
   byte_t const m_mapperNumber = (upperMapperNumberNybble | lowerMapperNumberNybble);
   d -> m_mapperNumber = m_mapperNumber;
   printf("Mapper Number: %u \n", m_mapperNumber);
