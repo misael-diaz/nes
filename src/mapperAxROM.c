@@ -27,19 +27,20 @@ typedef struct
 extern mapper_namespace_t const mapper;
 
 
-static byte_t readPRG (const void* v_core, const address_t addr)
+static byte_t readPRG (const void* v_core, const address_t address)
 {
   const mapper_t* core = v_core;
   const data_t* data = core -> data;
-  const mapperKind_t kind = data -> m_kind;
+  mapperKind_t const kind = data -> m_kind;
   const cartridge_t* cart = data -> m_cartridge;
   const mapperAxROM_t* map = data -> next;
   const byte_t* PRG = cart -> getROM(cart);
-  const uint32_t bank_PRG = map -> m_bank_PRG;
+  uint32_t const bank_PRG = map -> m_bank_PRG;
+
   // NOTE: mixed type arithmetic (from snes), address is uint16_t and bank-PRG is uint32_t
-  const uint32_t idx = ( (bank_PRG * 0x8000) + (addr & 0x7fff) );
-  const byte_t byte = PRG[idx];
-  printf("Mapper::Mapper: %d read %u from PRG at address 0x%x\n", kind, byte, idx);
+  uint32_t const addr = ( (bank_PRG * 0x8000) + (address & 0x7fff) );
+  byte_t const byte = PRG[addr];
+  printf("Mapper::Mapper: %d read %u from PRG at address 0x%x\n", kind, byte, addr);
   return byte;
 }
 
@@ -48,7 +49,7 @@ static byte_t readCHR (const void* v_core, const address_t addr)
 {
   const mapper_t* core = v_core;
   const data_t* data = core -> data;
-  const mapperKind_t kind = data -> m_kind;
+  mapperKind_t const kind = data -> m_kind;
   const mapperAxROM_t* map = data -> next;
   const byte_t* CHR = map -> m_characterRAM;
 
@@ -77,14 +78,14 @@ static void writePRG (void* v_core, const address_t addr, const byte_t byte)
 {
   mapper_t* core = v_core;
   data_t* data = core -> data;
-  const mapperKind_t kind = data -> m_kind;
+  mapperKind_t const kind = data -> m_kind;
   mapperAxROM_t* map = data -> next;
   if (addr >= 0x8000)
   {
     map -> m_bank_PRG = (byte & 0x07);
     map -> m_mirroring = ( (byte & 0x10)? OneScreenHigher : OneScreenLower );
     map -> m_mirroringCallBack();
-    const uint32_t bank = map -> m_bank_PRG;
+    uint32_t const bank = map -> m_bank_PRG;
     const char log[] = "Mapper::Mapper: %d wrote %u to bank-PRG\n";
     printf(log, kind, bank);
   }
@@ -95,7 +96,7 @@ static void writeCHR (void* v_core, const address_t addr, const byte_t byte)
 {
   mapper_t* core = v_core;
   data_t* data = core -> data;
-  const mapperKind_t kind = data -> m_kind;
+  mapperKind_t const kind = data -> m_kind;
   mapperAxROM_t* map = data -> next;
   byte_t* CHR = map -> m_characterRAM;
 
@@ -121,7 +122,7 @@ static nameTableMirroring_t getNameTableMirroring (const void* v_core)
   const mapper_t* core = v_core;
   const data_t* data = core -> data;
   const mapperAxROM_t* map = data -> next;
-  nameTableMirroring_t ntm = map -> m_mirroring;
+  nameTableMirroring_t const ntm = map -> m_mirroring;
   return ntm;
 }
 
@@ -136,7 +137,7 @@ static mapper_t* create (cartridge_t* cart, void (*mirroring_cb) (void))
     return core;
   }
 
-  // constructs derived AxRMO mapper (or extending class):
+  // constructs derived AxROM mapper (or extending class):
   mapperAxROM_t* map = malloc( sizeof(mapperAxROM_t) );
   if (map == NULL)
   {
@@ -156,14 +157,14 @@ static mapper_t* create (cartridge_t* cart, void (*mirroring_cb) (void))
   core -> getNameTableMirroring = getNameTableMirroring;
 
   // memory allocations:
-  size_t size_ROM = cart -> getSizeROM(cart);
+  size_t const size_ROM = cart -> getSizeROM(cart);
   if (size_ROM >= 0x8000)
   {
     printf("Using PRG-ROM OK\n");
   }
 
   size_t size_characterRAM = 0;
-  size_t size_VROM = cart -> getSizeVROM(cart);
+  size_t const size_VROM = cart -> getSizeVROM(cart);
   if (size_VROM != 0)
   {
     size_characterRAM = 0;
@@ -192,7 +193,7 @@ static mapper_t* create (cartridge_t* cart, void (*mirroring_cb) (void))
 
   // initializes mapper AxROM data:
   map -> m_core = core;
-  map -> m_bank_PRG = ( (uint32_t) 0 );
+  map -> m_bank_PRG = ( (uint32_t) 0x00000000 );
   map -> m_size_ROM = size_ROM;
   map -> m_size_VROM = size_VROM;
   map -> m_size_characterRAM = size_characterRAM;
