@@ -24,6 +24,7 @@ INC = -I../../nes/inc
 CARTRIDGE_SRC = cartridge.c
 MAPPER_SRC = mapper.c
 MAPPER_AXROM_SRC = mapperAxROM.c
+MAPPER_CNROM_SRC = mapperCNROM.c
 MAIN_SRC = main.c
 
 
@@ -31,8 +32,9 @@ MAIN_SRC = main.c
 CARTRIDGE_OBJ = cartridge.o
 MAPPER_OBJ = mapper.o
 MAPPER_AXROM_OBJ = mapperAxROM.o
+MAPPER_CNROM_OBJ = mapperCNROM.o
 MAIN_OBJ = main.o
-OBJECTS = $(CARTRIDGE_OBJ) $(MAPPER_OBJ) $(MAPPER_AXROM_OBJ) $(MAIN_OBJ)
+OBJECTS = $(CARTRIDGE_OBJ) $(MAPPER_OBJ) $(MAPPER_AXROM_OBJ) $(MAPPER_CNROM_OBJ) $(MAIN_OBJ)
 
 
 # binaries

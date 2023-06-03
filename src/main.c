@@ -22,6 +22,7 @@
 
 #include "cartridge.h"
 #include "mapperAxROM.h"
+#include "mapperCNROM.h"
 
 #define SUCCESS ( (int) 0x00000000 )
 #define FAILURE ( (int) 0xffffffff )
@@ -36,14 +37,22 @@ typedef struct
 
 extern cartridge_namespace_t const cartridge;
 extern mapperAxROM_namespace_t const mapperAxROM;
+extern mapperCNROM_namespace_t const mapperCNROM;
 
 void mirroringCallBack();
 int test_mapperAxROM();
+int test_mapperCNROM();
 
 int main ()
 {
   int stat;
   stat = test_mapperAxROM();
+  if (stat == FAILURE)
+  {
+    return stat;
+  }
+
+  stat = test_mapperCNROM();
   return stat;
 }
 
@@ -103,6 +112,51 @@ int test_mapperAxROM ()
 }
 
 
+int test_mapperCNROM ()
+{
+  cartridge_t* c = cartridge.create();
+  c -> loadFromFile(c);
+
+  if (c == NULL)
+  {
+    return FAILURE;
+  }
+
+  printf("ROM size: %lu \n", c -> getSizeROM(c));
+  if (c -> getROM(c) == NULL)
+  {
+    printf("PRG-ROM NOT OK\n");
+  }
+
+  printf("VROM size: %lu \n", c -> getSizeVROM(c));
+  if (c -> getVROM(c) == NULL)
+  {
+    printf("OK\n");
+  }
+
+  mapper_t* map = mapperCNROM.create(c);
+
+  if (map == NULL)
+  {
+    c = cartridge.destroy(c);
+    return FAILURE;
+  }
+
+  map -> readPRG(map, 0x8000);
+  map -> writePRG(map, 0x8000, 0x01);
+  map -> writeCHR(map, 0x1000, 0xff);
+  map -> readCHR(map, 0x1000);
+  data_t* data = map -> data;
+  mapperKind_t k = data -> m_kind;
+  nameTableMirroring_t ntm = map -> getNameTableMirroring(map);
+  printf("Mapper::Mapper: %d name table mirroring: %d\n", k, ntm);
+  printf("Mapper::Mapper: %d has extended RAM: %d\n", k, map -> hasExtendedRAM(map));
+  map -> scanlineIRQ(map);
+
+  map = mapperCNROM.destroy(map);
+  c = cartridge.destroy(c);
+  return SUCCESS;
+}
 // COMMENTS:
 // I am doing this for fun and because I want to test my ability to port C++ to C code.
 // By doing this I am aiming to learn more about these languages.
