@@ -241,18 +241,42 @@ static void info_colorSystem (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const isColorSystemBitSet = (header[0x0a] & 0x01);
-  //if ( (header[0xa] & 0x3) == 0x2 || (header[0xa] & 0x1) ) // what you should test
-  if (isColorSystemBitSet)
+
+  // official specification
+  byte_t const isPALEnabled1 = (header[0x09] & 0x01);			// ref[4]
+  if (isPALEnabled1)
+  {
+    printf("Uses PAL TV System (official specification)\n");
+  }
+  else
+  {
+    printf("Uses NTSC TV System (official specification)\n");
+  }
+
+  // unofficial specification (few emulators use it, see ref[5])
+  byte_t const isPALEnabled2 = ( (header[0x0a] & 0x03) == 0x02 );	// ref[5]
+  if (isPALEnabled2)
   {
     // NOTE: dunno why the ROM is not PAL compatible and how serious that really is
     // Perhaps it is okay if it supports one or the other but this will have to be
     // resolved later.
-    printf("Unsupported PAL ROM!\n");
+    printf("Uses PAL TV System (unofficial specification)\n");
   }
   else
   {
-    printf("ROM is NTSC compatible\n");
+    byte_t const byte = (header[0x0a] & 0x03);
+    switch (byte)
+    {
+      case 0:
+	printf("NTSC TV System (unofficial specification)\n");
+	break;
+      case 2:
+	printf("PAL TV System (unofficial specification)\n");
+	break;
+      default:
+	printf("Dual NTSC PAL TV System (unofficial specification)\n");
+	break;
+    }
   }
 }
 
@@ -492,6 +516,8 @@ cartridge_namespace_t const cartridge = {
 // [1] https://www.howtogeek.com/428987/whats-the-difference-between-ntsc-and-pal/
 // [2] https://www.nesdev.org/wiki/INES#Flags_6
 // [3] https://www.nesdev.org/wiki/INES#Flags_7
+// [4] https://www.nesdev.org/wiki/INES#Flags_9
+// [5] https://www.nesdev.org/wiki/INES#Flags_10
 
 
 // TODO:
