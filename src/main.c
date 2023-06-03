@@ -38,8 +38,23 @@ extern cartridge_namespace_t const cartridge;
 extern mapperAxROM_namespace_t const mapperAxROM;
 
 void mirroringCallBack();
+int test_mapperAxROM();
 
 int main ()
+{
+  int stat;
+  stat = test_mapperAxROM();
+  return stat;
+}
+
+
+void mirroringCallBack ()
+{
+  printf("mirroring callback from mapper\n");
+}
+
+
+int test_mapperAxROM ()
 {
   cartridge_t* c = cartridge.create();
   c -> loadFromFile(c);
@@ -85,11 +100,6 @@ int main ()
   map = mapperAxROM.destroy(map);
   c = cartridge.destroy(c);
   return SUCCESS;
-}
-
-void mirroringCallBack ()
-{
-  printf("mirroring callback from mapper\n");
 }
 
 
