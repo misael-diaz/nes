@@ -43,7 +43,7 @@ static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads ROM Header into cartr
     return NES_FAILURE_STATE;
   }
 
-  printf("header: %c %c %c %x\n", header[0], header[1], header[2], header[3]);
+  printf("header: %c %c %c 0x%x\n", header[0], header[1], header[2], header[3]);
 
   data_t* d = c -> data;
   d -> header = (byte_t*) malloc( size * sizeof(byte_t) );
@@ -65,7 +65,7 @@ static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t banks = header[4];
+  byte_t banks = header[4];	// see iNES file format: https://www.nesdev.org/wiki/INES
   printf("16KB PRG-ROM Banks: %u \n", banks);
   if (!banks)
   {
@@ -83,7 +83,7 @@ static int load_PRG_ROM (FILE* rom, cartridge_t* c)
 
   d -> banks = banks;
 
-  size_t num_banks = (0x4000 * banks);
+  size_t num_banks = (0x4000 * banks);	// PRG ROM size (bytes) see iNES file format
   byte_t b_PRG_ROM[num_banks];
   size_t count = fread(b_PRG_ROM, sizeof(byte_t), num_banks, rom);
   if (num_banks != count)
@@ -126,7 +126,7 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t vbanks = header[5];
+  byte_t vbanks = header[5];	// see iNES file format https://www.nesdev.org/wiki/INES
   d -> vbanks = vbanks;
   printf("8KB CHR-ROM Banks: %u \n", vbanks);
 
@@ -137,7 +137,7 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
     return NES_SUCCESS_STATE;
   }
 
-  size_t num_vbanks = (0x2000 * vbanks);
+  size_t num_vbanks = (0x2000 * vbanks);	// CHR ROM size (bytes), see iNES format
   byte_t b_CHR_ROM[num_vbanks];
   size_t count = fread(b_CHR_ROM, sizeof(byte_t), num_vbanks, rom);
   if (num_vbanks != count)
@@ -181,12 +181,12 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 }
 
 
-static void setTableMirroring (cartridge_t* c)
+static void setTableMirroring (cartridge_t* c)	// ref[2]
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const isFourScreenMirroringBitSet = (header[6] & 0x08);
-  if (isFourScreenMirroringBitSet)
+  byte_t const isFourScreenMirroringEnabled = (header[6] & 0x08);
+  if (isFourScreenMirroringEnabled)
   {
     nameTableMirroring_t mirroring = FourScreen;
     byte_t m_nameTableMirroring = mirroring;
@@ -195,8 +195,8 @@ static void setTableMirroring (cartridge_t* c)
   }
   else
   {
-    byte_t const isTableMirroringBitSet = (header[6] & 0x01);
-    byte_t m_nameTableMirroring = isTableMirroringBitSet;
+    byte_t const isVerticalMirroringEnabled = (header[6] & 0x01);
+    byte_t m_nameTableMirroring = isVerticalMirroringEnabled;
     switch (m_nameTableMirroring)
     {
       case 0:
@@ -206,7 +206,7 @@ static void setTableMirroring (cartridge_t* c)
 	printf("Name Table Mirroring: Vertical\n");
 	break;
       default:
-	printf("Name Table Mirroring: Unknown\n");
+	printf("Name Table Mirroring: Impossible\n");
 	break;
     }
     d -> m_nameTableMirroring = m_nameTableMirroring;
@@ -218,7 +218,9 @@ static void setMapperNumber (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t m_mapperNumber = ( ( (header[6] >> 4) & 0x0f ) | (header[7] & 0xf0) );
+  byte_t const lowerMapperNumberNybble = ( (header[6] >> 4) & 0x0f );	// ref[2]
+  byte_t const upperMapperNumberNybble = (header[7] & 0xf0);		// ref[3]
+  byte_t const m_mapperNumber = (upperMapperNumberNybble | lowerMapperNumberNybble);
   d -> m_mapperNumber = m_mapperNumber;
   printf("Mapper Number: %u \n", m_mapperNumber);
 }
@@ -228,7 +230,7 @@ static void setExtendedRAM (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const isExtendedRAMBitSet = (header[6] & 0x02);
+  byte_t const isExtendedRAMBitSet = (header[6] & 0x02); 		// ref[2]
   bool m_extendedRAM = (isExtendedRAMBitSet)? true : false;
   d -> m_extendedRAM = m_extendedRAM;
   printf("Extended CPU RAM: %u \n", m_extendedRAM);
@@ -239,23 +241,47 @@ static void info_colorSystem (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const isColorSystemBitSet = (header[0x0a] & 0x01);
-  //if ( (header[0xa] & 0x3) == 0x2 || (header[0xa] & 0x1) ) // what you should test
-  if (isColorSystemBitSet)
+
+  // official specification
+  byte_t const isPALEnabled1 = (header[0x09] & 0x01);			// ref[4]
+  if (isPALEnabled1)
+  {
+    printf("Uses PAL TV System (official specification)\n");
+  }
+  else
+  {
+    printf("Uses NTSC TV System (official specification)\n");
+  }
+
+  // unofficial specification (few emulators use it, see ref[5])
+  byte_t const isPALEnabled2 = ( (header[0x0a] & 0x03) == 0x02 );	// ref[5]
+  if (isPALEnabled2)
   {
     // NOTE: dunno why the ROM is not PAL compatible and how serious that really is
     // Perhaps it is okay if it supports one or the other but this will have to be
     // resolved later.
-    printf("Unsupported PAL ROM!\n");
+    printf("Uses PAL TV System (unofficial specification)\n");
   }
   else
   {
-    printf("ROM is NTSC compatible\n");
+    byte_t const byte = (header[0x0a] & 0x03);
+    switch (byte)
+    {
+      case 0:
+	printf("NTSC TV System (unofficial specification)\n");
+	break;
+      case 2:
+	printf("PAL TV System (unofficial specification)\n");
+	break;
+      default:
+	printf("Dual NTSC PAL TV System (unofficial specification)\n");
+	break;
+    }
   }
 }
 
 
-static int hasTrainerSupport (FILE* rom, cartridge_t* c)
+static int hasTrainerSupport (FILE* rom, cartridge_t* c)	// ref[2]
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
@@ -488,6 +514,10 @@ cartridge_namespace_t const cartridge = {
 // References:
 // [0] https://github.com/amhndu/SimpleNES
 // [1] https://www.howtogeek.com/428987/whats-the-difference-between-ntsc-and-pal/
+// [2] https://www.nesdev.org/wiki/INES#Flags_6
+// [3] https://www.nesdev.org/wiki/INES#Flags_7
+// [4] https://www.nesdev.org/wiki/INES#Flags_9
+// [5] https://www.nesdev.org/wiki/INES#Flags_10
 
 
 // TODO:
