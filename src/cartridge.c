@@ -230,7 +230,7 @@ static void setExtendedRAM (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const isExtendedRAMBitSet = (header[6] & 0x02);
+  byte_t const isExtendedRAMBitSet = (header[6] & 0x02); 		// ref[2]
   bool m_extendedRAM = (isExtendedRAMBitSet)? true : false;
   d -> m_extendedRAM = m_extendedRAM;
   printf("Extended CPU RAM: %u \n", m_extendedRAM);
