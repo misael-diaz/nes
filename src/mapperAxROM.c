@@ -27,7 +27,7 @@ typedef struct
 extern mapper_namespace_t const mapper;
 
 
-static byte_t readPRG (const void* v_core, const address_t addr)
+static byte_t readPRG (const void* v_core, const address_t address)
 {
   const mapper_t* core = v_core;
   const data_t* data = core -> data;
@@ -36,10 +36,11 @@ static byte_t readPRG (const void* v_core, const address_t addr)
   const mapperAxROM_t* map = data -> next;
   const byte_t* PRG = cart -> getROM(cart);
   uint32_t const bank_PRG = map -> m_bank_PRG;
+
   // NOTE: mixed type arithmetic (from snes), address is uint16_t and bank-PRG is uint32_t
-  uint32_t const idx = ( (bank_PRG * 0x8000) + (addr & 0x7fff) );
-  byte_t const byte = PRG[idx];
-  printf("Mapper::Mapper: %d read %u from PRG at address 0x%x\n", kind, byte, idx);
+  uint32_t const addr = ( (bank_PRG * 0x8000) + (address & 0x7fff) );
+  byte_t const byte = PRG[addr];
+  printf("Mapper::Mapper: %d read %u from PRG at address 0x%x\n", kind, byte, addr);
   return byte;
 }
 
