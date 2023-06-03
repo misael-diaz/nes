@@ -181,7 +181,7 @@ static int load_CHR_ROM (FILE* rom, cartridge_t* c)
 }
 
 
-static void setTableMirroring (cartridge_t* c)
+static void setTableMirroring (cartridge_t* c)	// ref[2]
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
