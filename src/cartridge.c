@@ -206,7 +206,7 @@ static void setTableMirroring (cartridge_t* c)
 	printf("Name Table Mirroring: Vertical\n");
 	break;
       default:
-	printf("Name Table Mirroring: Unknown\n");
+	printf("Name Table Mirroring: Impossible\n");
 	break;
     }
     d -> m_nameTableMirroring = m_nameTableMirroring;
