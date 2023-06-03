@@ -185,8 +185,8 @@ static void setTableMirroring (cartridge_t* c)
 {
   data_t* d = c -> data;
   byte_t* header = d -> header;
-  byte_t const isFourScreenMirroringBitSet = (header[6] & 0x08);
-  if (isFourScreenMirroringBitSet)
+  byte_t const isFourScreenMirroringEnabled = (header[6] & 0x08);
+  if (isFourScreenMirroringEnabled)
   {
     nameTableMirroring_t mirroring = FourScreen;
     byte_t m_nameTableMirroring = mirroring;
