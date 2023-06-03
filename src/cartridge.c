@@ -43,7 +43,7 @@ static int load_H_ROM (FILE* rom, cartridge_t* c)	// loads ROM Header into cartr
     return NES_FAILURE_STATE;
   }
 
-  printf("header: %c %c %c %x\n", header[0], header[1], header[2], header[3]);
+  printf("header: %c %c %c 0x%x\n", header[0], header[1], header[2], header[3]);
 
   data_t* d = c -> data;
   d -> header = (byte_t*) malloc( size * sizeof(byte_t) );
