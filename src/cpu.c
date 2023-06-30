@@ -28,7 +28,7 @@ static void ConnectBus (cpu_t* cpu, const device_t* devCPU)
 }
 
 
-static cpu_t* create (device_t* devCPU)
+static cpu_t* create (const device_t* dev)
 {
   cpu_t* cpu = malloc( sizeof(cpu_t) );
   if (cpu == NULL)
@@ -39,8 +39,9 @@ static cpu_t* create (device_t* devCPU)
 
   cpu -> read = read;
   cpu -> write = write;
+  cpu -> dev = dev;
 
-  ConnectBus(cpu, devCPU);
+  ConnectBus(cpu, dev);
 
   return cpu;
 }
