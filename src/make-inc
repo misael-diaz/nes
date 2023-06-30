@@ -23,7 +23,7 @@ INC = -I../../nes/inc
 # source codes
 BUS_SRC = bus.c
 CPU_SRC = cpu.c
-DEV_SRC = dev.c
+DEV_SRC = device.c
 CARTRIDGE_SRC = cartridge.c
 MAPPER_SRC = mapper.c
 MAPPER_AXROM_SRC = mapperAxROM.c
@@ -34,7 +34,7 @@ MAIN_SRC = main.c
 # object files
 BUS_OBJ = bus.o
 CPU_OBJ = cpu.o
-DEV_OBJ = dev.o
+DEV_OBJ = device.o
 CARTRIDGE_OBJ = cartridge.o
 MAPPER_OBJ = mapper.o
 MAPPER_AXROM_OBJ = mapperAxROM.o
