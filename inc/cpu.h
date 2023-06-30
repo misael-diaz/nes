@@ -10,14 +10,14 @@ typedef struct	// CPU
 {
   // public:
   bus_t* bus;							// Main Bus
-  device_t* device;						// base type of CPU
+  device_t* dev;						// base type of CPU
   byte_t (*read) (const void*, const address_t);
   void (*write) (void*, const address_t, const byte_t);
 } cpu_t;
 
 typedef struct
 {
-  cpu_t* (*create) (device_t*);
+  cpu_t* (*create) (const device_t*);
   cpu_t* (*destroy) (cpu_t*);
 } cpu_namespace_t;
 
