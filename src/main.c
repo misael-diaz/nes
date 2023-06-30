@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 
+#include "cpu.h"
 #include "cartridge.h"
 #include "mapperAxROM.h"
 #include "mapperCNROM.h"
@@ -35,6 +36,9 @@ typedef struct
   void* next;
 } data_t;
 
+extern cpu_namespace_t const cpu;
+extern bus_namespace_t const bus;
+extern buscpu_namespace_t const buscpu;
 extern cartridge_namespace_t const cartridge;
 extern mapperAxROM_namespace_t const mapperAxROM;
 extern mapperCNROM_namespace_t const mapperCNROM;
@@ -42,18 +46,32 @@ extern mapperCNROM_namespace_t const mapperCNROM;
 void mirroringCallBack();
 int test_mapperAxROM();
 int test_mapperCNROM();
+void tests();
 
 int main ()
+{
+  buscpu_t* busCPU = buscpu.create();
+  bus_t* Bus = bus.create(busCPU);
+  cpu_t* CPU = cpu.create(busCPU);
+
+  busCPU = buscpu.destroy(busCPU);
+  Bus = bus.destroy(Bus);
+  CPU = cpu.destroy(CPU);
+  return 0;
+}
+
+
+void tests ()
 {
   int stat;
   stat = test_mapperAxROM();
   if (stat == FAILURE)
   {
-    return stat;
+    return;
   }
 
   stat = test_mapperCNROM();
-  return stat;
+  return;
 }
 
 
