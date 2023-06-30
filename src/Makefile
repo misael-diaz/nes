@@ -22,13 +22,13 @@ all: $(TESTS)
 $(MAIN_BIN): $(OBJECTS)
 	$(CC) $(CCOPT) $(OBJECTS) -o $(MAIN_BIN) $(LIBS)
 
-$(BUSCPU_OBJ): $(BUSCPU_SRC)
-	$(CC) $(CCOPT) $(INC) -c $(BUSCPU_SRC) -o $(BUSCPU_OBJ)
+$(DEV_OBJ): $(DEV_SRC)
+	$(CC) $(CCOPT) $(INC) -c $(DEV_SRC) -o $(DEV_OBJ)
 
-$(BUS_OBJ): $(BUSCPU_OBJ) $(BUS_SRC)
+$(BUS_OBJ): $(DEV_OBJ) $(BUS_SRC)
 	$(CC) $(CCOPT) $(INC) -c $(BUS_SRC) -o $(BUS_OBJ)
 
-$(CPU_OBJ): $(BUSCPU_OBJ) $(CPU_SRC)
+$(CPU_OBJ): $(DEV_OBJ) $(CPU_SRC)
 	$(CC) $(CCOPT) $(INC) -c $(CPU_SRC) -o $(CPU_OBJ)
 
 $(CARTRIDGE_OBJ): $(CARTRIDGE_SRC)

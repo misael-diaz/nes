@@ -38,7 +38,7 @@ typedef struct
 
 extern cpu_namespace_t const cpu;
 extern bus_namespace_t const bus;
-extern buscpu_namespace_t const buscpu;
+extern device_namespace_t const device;
 extern cartridge_namespace_t const cartridge;
 extern mapperAxROM_namespace_t const mapperAxROM;
 extern mapperCNROM_namespace_t const mapperCNROM;
@@ -50,11 +50,11 @@ void tests();
 
 int main ()
 {
-  buscpu_t* busCPU = buscpu.create();
-  bus_t* Bus = bus.create(busCPU);
-  cpu_t* CPU = cpu.create(busCPU);
+  device_t* devCPU = device.create();
+  bus_t* Bus = bus.create(devCPU);
+  cpu_t* CPU = cpu.create(devCPU);
 
-  busCPU = buscpu.destroy(busCPU);
+  devCPU = device.destroy(devCPU);
   Bus = bus.destroy(Bus);
   CPU = cpu.destroy(CPU);
   return 0;

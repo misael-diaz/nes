@@ -36,7 +36,7 @@ static void write (void* vbus, address_t const address, byte_t const data)
 }
 
 
-static bus_t* create (buscpu_t* busCPU)
+static bus_t* create (device_t* cpu)
 {
   bus_t* bus = malloc( sizeof(bus_t) );
   if (bus == NULL)
@@ -64,7 +64,7 @@ static bus_t* create (buscpu_t* busCPU)
   bus -> read = read;
   bus -> write = write;
 
-  busCPU -> ConnectBus(busCPU, bus);
+  cpu -> ConnectBus(cpu, bus);
 
   return bus;
 }
