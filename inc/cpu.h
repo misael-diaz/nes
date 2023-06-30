@@ -2,22 +2,22 @@
 #define NES_CPU_TYPE_H
 
 #include "bus.h"
-#include "buscpu.h"
+#include "device.h"
 #include "address.h"
 #include "byte.h"
 
 typedef struct	// CPU
 {
   // public:
-  bus_t* bus;						// Main Bus
-  buscpu_t* busCPU;					// Bus of the CPU
+  bus_t* bus;							// Main Bus
+  device_t* device;						// base type of CPU
   byte_t (*read) (const void*, const address_t);
   void (*write) (void*, const address_t, const byte_t);
 } cpu_t;
 
 typedef struct
 {
-  cpu_t* (*create) (buscpu_t*);
+  cpu_t* (*create) (device_t*);
   cpu_t* (*destroy) (cpu_t*);
 } cpu_namespace_t;
 

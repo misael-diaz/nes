@@ -21,14 +21,14 @@ static void write (void* vcpu, address_t const address, byte_t const data)
 }
 
 
-static void ConnectBus (cpu_t* cpu, const buscpu_t* busCPU)
+static void ConnectBus (cpu_t* cpu, const device_t* devCPU)
 {
-  bus_t* bus = busCPU -> vbus;
+  bus_t* bus = devCPU -> vbus;
   cpu -> bus = bus;
 }
 
 
-static cpu_t* create (buscpu_t* busCPU)
+static cpu_t* create (device_t* devCPU)
 {
   cpu_t* cpu = malloc( sizeof(cpu_t) );
   if (cpu == NULL)
@@ -40,7 +40,7 @@ static cpu_t* create (buscpu_t* busCPU)
   cpu -> read = read;
   cpu -> write = write;
 
-  ConnectBus(cpu, busCPU);
+  ConnectBus(cpu, devCPU);
 
   return cpu;
 }

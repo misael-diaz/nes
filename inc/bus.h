@@ -1,7 +1,7 @@
 #ifndef NES_BUS_TYPE_H
 #define NES_BUS_TYPE_H
 
-#include "buscpu.h"
+#include "device.h"
 #include "address.h"
 #include "byte.h"
 
@@ -9,14 +9,14 @@ typedef struct	// Bus
 {
   // public:
   byte_t* ram;						// fake RAM
-  buscpu_t* busCPU;					// CPU Bus Connection
+  device_t* cpu;					// for the CPU Bus connection
   byte_t (*read) (const void*, const address_t);
   void (*write) (void*, const address_t, const byte_t);
 } bus_t;
 
 typedef struct
 {
-  bus_t* (*create) (buscpu_t*);
+  bus_t* (*create) (device_t*);
   bus_t* (*destroy) (bus_t*);
 } bus_namespace_t;
 
